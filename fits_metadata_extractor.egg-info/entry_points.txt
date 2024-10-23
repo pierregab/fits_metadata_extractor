@@ -1,2 +1,0 @@
-[console_scripts]
-fits_metadata_extractor = fits_metadata_extractor.extractor:main
