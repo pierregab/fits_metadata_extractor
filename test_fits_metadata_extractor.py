@@ -1,7 +1,7 @@
 # test_fits_metadata_extractor.py
 
 import unittest
-from fits_metadata_extractor.extractor import is_point_in_convex_polygon
+from old.extractor import is_point_in_convex_polygon
 import matplotlib.pyplot as plt
 from mocpy import MOC
 from astropy.coordinates import SkyCoord

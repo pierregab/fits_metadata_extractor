@@ -14,14 +14,12 @@ Date: October 23, 2024
 import os
 import logging
 import pandas as pd
-from fits_metadata_extractor.extractor import (
-    process_fits_directory_parallel,
-    save_metadata_to_csv,
-    search_fits_by_point,
-    search_fits_by_region,
-    load_metadata_from_csv,
-    plot_moc_and_polygon_from_dataset_notebook
-)
+
+# Import the necessary classes and functions from the new structure
+from fits_metadata_extractor.processor import FITSProcessor
+from fits_metadata_extractor.utils import save_metadata_to_csv, load_metadata_from_csv
+from fits_metadata_extractor.search import search_fits_by_point, search_fits_by_region
+from fits_metadata_extractor.plotter import plot_moc_and_polygon_from_dataset_notebook
 
 def main():
     """
@@ -30,7 +28,7 @@ def main():
     """
 
     # Specify the directory containing FITS files
-    fits_directory = "fits_collection"  # <-- CHANGE THIS PATH
+    fits_directory = "fits_collection"  # <-- CHANGE THIS PATH TO YOUR FITS FILES DIRECTORY
     output_csv = 'metadata.csv'
     plot_output_dir = 'plots'  # Directory where plots will be saved
 
@@ -39,9 +37,10 @@ def main():
         logging.error(f"The specified FITS directory does not exist: {fits_directory}")
         return
 
-    # Process FITS files using parallel processing
+    # Process FITS files using FITSProcessor
     logging.info("Starting processing of FITS files.")
-    metadata_df = process_fits_directory_parallel(fits_directory, max_workers=5)
+    processor = FITSProcessor(max_workers=5)
+    metadata_df = processor.process_fits_directory_parallel(fits_directory)
     logging.info("Finished processing FITS files.")
 
     # Save the metadata to CSV

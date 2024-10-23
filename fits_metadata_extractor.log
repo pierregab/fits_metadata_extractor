@@ -16971,3 +16971,418 @@ dtype: int64
 2024-10-23 14:46:55,947 - INFO - FITS files intersecting the circular region (RA=150.0, Dec=2.2, Radius=1.0 degrees):
 2024-10-23 14:46:57,532 - INFO - Testing search by polygonal region with coordinates: [(149.0, 1.0), (151.0, 1.0), (151.0, 3.0), (149.0, 3.0)]
 2024-10-23 14:46:57,536 - INFO - FITS files intersecting the polygonal region:
+2024-10-23 14:58:49,386 - INFO - Starting FITS metadata extraction process.
+2024-10-23 14:58:49,386 - INFO - Input directory: /fits_collection
+2024-10-23 14:58:49,387 - INFO - Output CSV: output_metadata.csv
+2024-10-23 14:58:49,387 - WARNING - No FITS files found in directory: /fits_collection
+2024-10-23 14:58:49,388 - WARNING - Column 'RA' not found in DataFrame.
+2024-10-23 14:58:49,388 - WARNING - Column 'DEC' not found in DataFrame.
+2024-10-23 14:58:49,388 - WARNING - Column 'RA_WCS' not found in DataFrame.
+2024-10-23 14:58:49,388 - WARNING - Column 'DEC_WCS' not found in DataFrame.
+2024-10-23 14:58:49,388 - WARNING - Column 'DATE-OBS' not found in DataFrame.
+2024-10-23 14:58:49,388 - WARNING - Column 'MJD-OBS' not found in DataFrame.
+2024-10-23 14:58:49,388 - WARNING - Column 'JD' not found in DataFrame.
+2024-10-23 14:58:49,388 - WARNING - Column 'EXPTIME' not found in DataFrame.
+2024-10-23 14:58:49,388 - WARNING - Column 'RADESYS' not found in DataFrame.
+2024-10-23 14:58:49,388 - WARNING - Column 'Resolved_Object' not found in DataFrame.
+2024-10-23 14:58:49,389 - WARNING - Column 'Polygon' was missing and has been added with NA values.
+2024-10-23 14:58:49,389 - WARNING - Column 'MOC' was missing and has been added with NA values.
+2024-10-23 14:58:49,389 - WARNING - Column 'Polygon_Coords' was missing and has been added with NA values.
+2024-10-23 14:58:49,389 - WARNING - Column 'RA_WCS' not found in DataFrame.
+2024-10-23 14:58:49,389 - WARNING - Column 'DEC_WCS' not found in DataFrame.
+2024-10-23 14:58:49,390 - INFO - Missing values after homogenization:
+Polygon           0
+MOC               0
+Polygon_Coords    0
+dtype: int64
+2024-10-23 14:58:49,391 - INFO - Metadata successfully saved to output_metadata.csv.
+2024-10-23 14:58:49,391 - INFO - FITS metadata extraction and homogenization process completed successfully.
+2024-10-23 15:00:30,491 - INFO - Starting FITS metadata extraction process.
+2024-10-23 15:00:30,494 - INFO - Input directory: /fits_collection
+2024-10-23 15:00:30,494 - INFO - Output CSV: output_metadata.csv
+2024-10-23 15:00:30,494 - WARNING - No FITS files found in directory: /fits_collection
+2024-10-23 15:00:30,495 - WARNING - Column 'RA' not found in DataFrame.
+2024-10-23 15:00:30,495 - WARNING - Column 'DEC' not found in DataFrame.
+2024-10-23 15:00:30,495 - WARNING - Column 'RA_WCS' not found in DataFrame.
+2024-10-23 15:00:30,495 - WARNING - Column 'DEC_WCS' not found in DataFrame.
+2024-10-23 15:00:30,495 - WARNING - Column 'DATE-OBS' not found in DataFrame.
+2024-10-23 15:00:30,495 - WARNING - Column 'MJD-OBS' not found in DataFrame.
+2024-10-23 15:00:30,495 - WARNING - Column 'JD' not found in DataFrame.
+2024-10-23 15:00:30,495 - WARNING - Column 'EXPTIME' not found in DataFrame.
+2024-10-23 15:00:30,495 - WARNING - Column 'RADESYS' not found in DataFrame.
+2024-10-23 15:00:30,495 - WARNING - Column 'Resolved_Object' not found in DataFrame.
+2024-10-23 15:00:30,496 - WARNING - Column 'Polygon' was missing and has been added with NA values.
+2024-10-23 15:00:30,496 - WARNING - Column 'MOC' was missing and has been added with NA values.
+2024-10-23 15:00:30,496 - WARNING - Column 'Polygon_Coords' was missing and has been added with NA values.
+2024-10-23 15:00:30,496 - WARNING - Column 'RA_WCS' not found in DataFrame.
+2024-10-23 15:00:30,496 - WARNING - Column 'DEC_WCS' not found in DataFrame.
+2024-10-23 15:00:30,497 - INFO - Missing values after homogenization:
+Polygon           0
+MOC               0
+Polygon_Coords    0
+dtype: int64
+2024-10-23 15:00:30,498 - INFO - Metadata successfully saved to output_metadata.csv.
+2024-10-23 15:00:30,498 - INFO - FITS metadata extraction and homogenization process completed successfully.
+2024-10-23 15:02:04,356 - INFO - Starting FITS metadata extraction process.
+2024-10-23 15:02:04,358 - INFO - Input directory: fits_collection
+2024-10-23 15:02:04,358 - INFO - Output CSV: output_metadata.csv
+2024-10-23 15:02:04,359 - INFO - Processing file: fits_collection/G327.617-0.364_I4.fits
+2024-10-23 15:02:04,359 - INFO - Processing file: fits_collection/SN1987A_cut_35_smHB.fits
+2024-10-23 15:02:04,359 - INFO - Processing file: fits_collection/G351.702+0.672_atlasgal.fits
+2024-10-23 15:02:04,359 - INFO - Processing file: fits_collection/5GHz_n_f.fits
+2024-10-23 15:02:04,360 - INFO - Processing file: fits_collection/G351.632-0.459_atlasgal.fits
+2024-10-23 15:02:04,360 - INFO - Processing file: fits_collection/UGC_09618_S_2MASS_H.fits
+2024-10-23 15:02:04,360 - INFO - Processing file: fits_collection/UGC_09618_2MASS_H.fits
+2024-10-23 15:02:04,360 - INFO - Processing file: fits_collection/SNaverage5-0.fits
+2024-10-23 15:02:04,360 - INFO - Processing file: fits_collection/2013.1.01292.S_SB_X4eb_GB_X4ec_MB_X4ed_2-38011_sci.spw0_1_2_3.cont.I.image.fits
+2024-10-23 15:02:04,360 - INFO - Processing file: fits_collection/N2.20100426.52760.fits
+2024-10-23 15:02:04,361 - INFO - Inferred object name 'G327.617-0.364' for file 'fits_collection/G327.617-0.364_I4.fits'.
+2024-10-23 15:02:04,364 - INFO - Inferred object name 'UGC' for file 'fits_collection/UGC_09618_S_2MASS_H.fits'.
+2024-10-23 15:02:04,365 - INFO - Inferred object name 'G351.632-0.459' for file 'fits_collection/G351.632-0.459_atlasgal.fits'.
+2024-10-23 15:02:04,367 - INFO - Inferred object name 'G351.702' for file 'fits_collection/G351.702+0.672_atlasgal.fits'.
+2024-10-23 15:02:04,409 - INFO - Inferred object name 'UGC' for file 'fits_collection/UGC_09618_2MASS_H.fits'.
+2024-10-23 15:02:04,463 - ERROR - Unexpected error during NED query for 'SNR1987A': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:04,464 - ERROR - Unexpected error during NED query for '022 P9870': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:04,464 - ERROR - Unexpected error during NED query for 'G351.632-0.459': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:04,464 - ERROR - Unexpected error during NED query for 'UGC': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:04,464 - ERROR - Unexpected error during NED query for '2-38011': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:04,464 - ERROR - Unexpected error during NED query for 'G327.617-0.364': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:04,465 - ERROR - Unexpected error during NED query for 'UGC': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:04,465 - ERROR - Unexpected error during NED query for 'r143': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:04,465 - ERROR - Unexpected error during NED query for 'SNR1987A': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:04,465 - ERROR - Unexpected error during NED query for 'G351.702': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:04,484 - ERROR - Unexpected error during NED query for 'UGC': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:04,553 - ERROR - Unexpected error during NED query for '2-38011': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:04,554 - ERROR - Unexpected error during NED query for 'r143': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:04,557 - ERROR - Unexpected error during NED query for '022P9870': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:04,560 - ERROR - Unexpected error during NED query for 'UGC': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:04,562 - ERROR - Unexpected error during NED query for 'G351702': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:04,584 - ERROR - Unexpected error during NED query for 'SNr143': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:04,584 - ERROR - Unexpected error during NED query for 'SN2-38011': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:04,584 - ERROR - Unexpected error during NED query for 'SNUGC': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:04,585 - ERROR - Unexpected error during NED query for 'SN022 P9870': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:04,592 - ERROR - Unexpected error during NED query for 'SNUGC': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:04,596 - ERROR - Unexpected error during NED query for 'SNG351.702': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:04,611 - ERROR - Unexpected error during NED query for 'r143SN': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:04,612 - ERROR - Unexpected error during NED query for 'UGCSN': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:04,620 - ERROR - Unexpected error during NED query for 'UGCSN': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:04,624 - ERROR - Unexpected error during NED query for '2-38011SN': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:04,628 - ERROR - Unexpected error during NED query for '022 P9870SN': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:04,631 - ERROR - Unexpected error during NED query for 'G351.702SN': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:04,753 - ERROR - XML parsing failed for 'UGC': not well-formed (invalid token): line 4, column 4
+2024-10-23 15:02:04,754 - INFO - Retrying (1/3)...
+2024-10-23 15:02:04,794 - ERROR - XML parsing failed for 'UGC': not well-formed (invalid token): line 4, column 4
+2024-10-23 15:02:04,800 - INFO - Retrying (2/3)...
+2024-10-23 15:02:04,834 - ERROR - XML parsing failed for 'UGC': not well-formed (invalid token): line 4, column 4
+2024-10-23 15:02:04,844 - INFO - Retrying (3/3)...
+2024-10-23 15:02:04,845 - ERROR - Failed to resolve 'UGC' after 3 attempts.
+2024-10-23 15:02:04,850 - WARNING - No resolved name found for 'UGC'.
+2024-10-23 15:02:04,856 - INFO - Successfully processed 'fits_collection/UGC_09618_2MASS_H.fits'. Resolved using Unknown: 'Unknown'. MOC Details - Sky Fraction: 0.000004, Number of Cells: 26, Max Order: 10. Polygon: POLYGON ((224.30832666152753 24.322796352792704, 224.14402273847247 24.322796352792704, 224.14363977003902 24.90445743723609, 224.308709629961 24.90445743723609, 224.30832666152753 24.322796352792704)).
+2024-10-23 15:02:04,857 - INFO - Extracted RA_WCS: 224.2261747, DEC_WCS: 24.61364929999999 for fits_collection/UGC_09618_2MASS_H.fits.
+2024-10-23 15:02:04,857 - INFO - Processing file: fits_collection/NGC_4486_MIPS_M1.fits
+2024-10-23 15:02:04,889 - ERROR - Unexpected error during NED query for 'VIRGO-1': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:04,912 - ERROR - Unexpected error during NED query for 'VIRGO-1': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:04,962 - ERROR - Unexpected error during NED query for 'SNVIRGO-1': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:04,971 - ERROR - Unexpected error during NED query for 'VIRGO-1SN': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:05,007 - ERROR - XML parsing failed for 'VIRGO-1': not well-formed (invalid token): line 4, column 4
+2024-10-23 15:02:05,012 - INFO - Retrying (1/3)...
+2024-10-23 15:02:05,052 - ERROR - XML parsing failed for 'VIRGO-1': not well-formed (invalid token): line 4, column 4
+2024-10-23 15:02:05,057 - INFO - Retrying (2/3)...
+2024-10-23 15:02:05,084 - ERROR - XML parsing failed for 'VIRGO-1': not well-formed (invalid token): line 4, column 4
+2024-10-23 15:02:05,086 - INFO - Retrying (3/3)...
+2024-10-23 15:02:05,086 - ERROR - Failed to resolve 'VIRGO-1' after 3 attempts.
+2024-10-23 15:02:05,086 - WARNING - No resolved name found for 'VIRGO-1'.
+2024-10-23 15:02:05,093 - INFO - Successfully processed 'fits_collection/NGC_4486_MIPS_M1.fits'. Resolved using Unknown: 'Unknown'. MOC Details - Sky Fraction: 0.000018, Number of Cells: 90, Max Order: 10. Polygon: POLYGON ((187.47777580413705 11.471189399348724, 187.2141455382065 11.57841734224368, 188.01807617563932 13.463669558462998, 188.28324439567785 13.355678936359176, 187.47777580413705 11.471189399348724)).
+2024-10-23 15:02:05,095 - INFO - Extracted RA_WCS: 187.74691322832936, DEC_WCS: 12.467659296574459 for fits_collection/NGC_4486_MIPS_M1.fits.
+2024-10-23 15:02:05,096 - INFO - Processing file: fits_collection/av_galcen_2mass.fits
+2024-10-23 15:02:05,103 - INFO - Inferred object name 'av' for file 'fits_collection/av_galcen_2mass.fits'.
+2024-10-23 15:02:05,127 - ERROR - Unexpected error during NED query for 'av': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:05,213 - ERROR - Unexpected error during NED query for 'av': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:05,233 - ERROR - Unexpected error during NED query for 'SNav': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:05,250 - ERROR - Unexpected error during NED query for 'avSN': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:05,422 - INFO - Resolved 'G351.632-0.459' to 'G351.632-0.459' using VizieR with name 'G351.632-0.459'.
+2024-10-23 15:02:05,422 - ERROR - XML parsing failed for 'av': not well-formed (invalid token): line 4, column 4
+2024-10-23 15:02:05,427 - INFO - Successfully processed 'fits_collection/G351.632-0.459_atlasgal.fits'. Resolved using VizieR: 'G351.632-0.459'. MOC Details - Sky Fraction: 0.000001, Number of Cells: 8, Max Order: 10. Polygon: POLYGON ((351.7458316825 -0.5191667704999999, 351.5408316415 -0.5191667704999999, 351.5408316415 -0.4058334145, 351.7458316825 -0.4058334145, 351.7458316825 -0.5191667704999999)).
+2024-10-23 15:02:05,427 - INFO - Retrying (1/3)...
+2024-10-23 15:02:05,429 - INFO - Extracted GLON_WCS: 351.643331662, GLAT_WCS: -0.46250009249999996 for fits_collection/G351.632-0.459_atlasgal.fits.
+2024-10-23 15:02:05,431 - INFO - Processing file: fits_collection/id12_GAL-Survey-GC.fpsf.fits
+2024-10-23 15:02:05,439 - INFO - Inferred object name 'id12' for file 'fits_collection/id12_GAL-Survey-GC.fpsf.fits'.
+2024-10-23 15:02:05,458 - ERROR - XML parsing failed for 'av': not well-formed (invalid token): line 4, column 4
+2024-10-23 15:02:05,459 - INFO - Retrying (2/3)...
+2024-10-23 15:02:05,470 - ERROR - Unexpected error during NED query for 'id12': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:05,493 - ERROR - XML parsing failed for 'av': not well-formed (invalid token): line 4, column 4
+2024-10-23 15:02:05,494 - ERROR - Unexpected error during NED query for 'id12': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:05,494 - INFO - Retrying (3/3)...
+2024-10-23 15:02:05,496 - ERROR - Failed to resolve 'av' after 3 attempts.
+2024-10-23 15:02:05,497 - WARNING - No resolved name found for 'av'.
+2024-10-23 15:02:05,499 - INFO - Successfully processed 'fits_collection/av_galcen_2mass.fits'. Resolved using Unknown: 'Unknown'. MOC Details - Sky Fraction: 0.000169, Number of Cells: 255, Max Order: 10. Polygon: POLYGON ((267.78736491517896 -30.278549885775647, 265.00936689128497 -30.278142689934317, 265.0460054752501 -27.546134398469633, 267.7517289947569 -27.546498168041428, 267.78736491517896 -30.278549885775647)).
+2024-10-23 15:02:05,501 - INFO - Extracted RA_WCS: 266.3986089730605, DEC_WCS: -28.91926301125171 for fits_collection/av_galcen_2mass.fits.
+2024-10-23 15:02:05,501 - INFO - Processing file: fits_collection/SN1987A_87_smHB.fits
+2024-10-23 15:02:05,510 - ERROR - Unexpected error during NED query for 'SNid12': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:05,516 - INFO - Resolved 'sn1987a' to 'SN 1987A' using Simbad with name 'sn1987a'.
+2024-10-23 15:02:05,519 - INFO - Successfully processed 'fits_collection/SN1987A_87_smHB.fits'. Resolved using Simbad: 'SN 1987A'. MOC Details - Sky Fraction: 0.000004, Number of Cells: 21, Max Order: 10. Polygon: POLYGON ((84.3173092857228 -69.45067849200001, 83.4160307142772 -69.45067849200001, 83.42348958848474 -69.088761508, 84.30985041151526 -69.088761508, 84.3173092857228 -69.45067849200001)).
+2024-10-23 15:02:05,519 - INFO - Extracted RA_WCS: 83.86667, DEC_WCS: -69.26972 for fits_collection/SN1987A_87_smHB.fits.
+2024-10-23 15:02:05,523 - INFO - Processing file: fits_collection/av_galcen_spitzer.fits
+2024-10-23 15:02:05,526 - ERROR - Unexpected error during NED query for 'id12SN': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:05,531 - INFO - Inferred object name 'av' for file 'fits_collection/av_galcen_spitzer.fits'.
+2024-10-23 15:02:05,536 - INFO - Successfully processed 'fits_collection/av_galcen_spitzer.fits'. Resolved using Unknown: 'Unknown'. MOC Details - Sky Fraction: 0.000166, Number of Cells: 229, Max Order: 10. Polygon: POLYGON ((267.78718161103103 -30.190475586624736, 265.0116341916512 -30.19006981604887, 265.04727937434296 -27.524670707324933, 267.752511907322 -27.525034154695774, 267.78718161103103 -30.190475586624736)).
+2024-10-23 15:02:05,536 - INFO - Extracted RA_WCS: 266.3996440174536, DEC_WCS: -28.864479014275368 for fits_collection/av_galcen_spitzer.fits.
+2024-10-23 15:02:05,537 - INFO - Processing file: fits_collection/2013.1.00034.S_SB_X5_GB_X6_MB_X7_midz_cell10_25342_sci.spw0_1_2_3.cont.I.image.fits
+2024-10-23 15:02:05,552 - ERROR - Unexpected error during NED query for 'midz_cell10_25342': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:05,562 - ERROR - XML parsing failed for 'id12': not well-formed (invalid token): line 4, column 4
+2024-10-23 15:02:05,564 - INFO - Retrying (1/3)...
+2024-10-23 15:02:05,568 - ERROR - Unexpected error during NED query for 'midz_cell10_25342': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:05,579 - ERROR - Unexpected error during NED query for 'SNmidz_cell10_25342': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:05,602 - ERROR - XML parsing failed for 'id12': not well-formed (invalid token): line 4, column 4
+2024-10-23 15:02:05,603 - INFO - Retrying (2/3)...
+2024-10-23 15:02:05,605 - ERROR - Unexpected error during NED query for 'midz_cell10_25342SN': The remote service returned the following error message.
+ERROR: The object name that you have submitted is not currently recognized by the NED name interpreter.
+2024-10-23 15:02:05,633 - ERROR - XML parsing failed for 'id12': not well-formed (invalid token): line 4, column 4
+2024-10-23 15:02:05,633 - INFO - Retrying (3/3)...
+2024-10-23 15:02:05,929 - INFO - Resolved 'G327.617-0.364' to 'G327.617-0.364' using VizieR with name 'G327.617-0.364'.
+2024-10-23 15:02:05,931 - ERROR - Failed to resolve 'id12' after 3 attempts.
+2024-10-23 15:02:05,932 - ERROR - XML parsing failed for 'midz_cell10_25342': not well-formed (invalid token): line 4, column 4
+2024-10-23 15:02:05,935 - INFO - Successfully processed 'fits_collection/G327.617-0.364_I4.fits'. Resolved using VizieR: 'G327.617-0.364'. MOC Details - Sky Fraction: 0.000001, Number of Cells: 11, Max Order: 10. Polygon: POLYGON ((327.7141602095 -0.4191667505, 327.5158268365 -0.4191667505, 327.5158268365 -0.3091667285, 327.7141602095 -0.3091667285, 327.7141602095 -0.4191667505)).
+2024-10-23 15:02:05,939 - WARNING - No resolved name found for 'id12'.
+2024-10-23 15:02:05,939 - INFO - Retrying (1/3)...
+2024-10-23 15:02:05,945 - ERROR - XML parsing failed for 'G351.702': not well-formed (invalid token): line 4, column 4
+2024-10-23 15:02:05,945 - ERROR - XML parsing failed for 'UGC': not well-formed (invalid token): line 4, column 4
+2024-10-23 15:02:05,945 - INFO - Extracted GLON_WCS: 327.614993523, GLAT_WCS: -0.3641667395 for fits_collection/G327.617-0.364_I4.fits.
+2024-10-23 15:02:05,950 - ERROR - XML parsing failed for '022 P9870': not well-formed (invalid token): line 4, column 4
+2024-10-23 15:02:05,950 - ERROR - XML parsing failed for '2-38011': not well-formed (invalid token): line 4, column 4
+2024-10-23 15:02:05,952 - ERROR - XML parsing failed for 'r143': not well-formed (invalid token): line 4, column 4
+2024-10-23 15:02:05,961 - INFO - Successfully processed 'fits_collection/id12_GAL-Survey-GC.fpsf.fits'. Resolved using Unknown: 'Unknown'. MOC Details - Sky Fraction: 0.067794, Number of Cells: 4034, Max Order: 10. Polygon: POLYGON ((34.933335155456 -17.933334268736, 324.9999981744 -17.933334268736, 324.9999981744 18.00000093888, 34.933335155456 18.00000093888, 34.933335155456 -17.933334268736)).
+2024-10-23 15:02:05,962 - INFO - Retrying (1/3)...
+2024-10-23 15:02:05,963 - INFO - Retrying (1/3)...
+2024-10-23 15:02:05,965 - INFO - Retrying (1/3)...
+2024-10-23 15:02:05,965 - INFO - Retrying (1/3)...
+2024-10-23 15:02:05,970 - INFO - Retrying (1/3)...
+2024-10-23 15:02:05,971 - INFO - Extracted GLON_WCS: 359.966666664928, GLAT_WCS: 0.033333335072 for fits_collection/id12_GAL-Survey-GC.fpsf.fits.
+2024-10-23 15:02:05,983 - ERROR - XML parsing failed for 'midz_cell10_25342': not well-formed (invalid token): line 4, column 4
+2024-10-23 15:02:05,987 - INFO - Retrying (2/3)...
+2024-10-23 15:02:05,993 - ERROR - XML parsing failed for 'UGC': not well-formed (invalid token): line 4, column 4
+2024-10-23 15:02:05,995 - INFO - Retrying (2/3)...
+2024-10-23 15:02:06,005 - ERROR - XML parsing failed for 'G351.702': not well-formed (invalid token): line 4, column 4
+2024-10-23 15:02:06,005 - ERROR - XML parsing failed for 'r143': not well-formed (invalid token): line 4, column 4
+2024-10-23 15:02:06,005 - ERROR - XML parsing failed for '2-38011': not well-formed (invalid token): line 4, column 4
+2024-10-23 15:02:06,006 - ERROR - XML parsing failed for '022 P9870': not well-formed (invalid token): line 4, column 4
+2024-10-23 15:02:06,009 - INFO - Retrying (2/3)...
+2024-10-23 15:02:06,010 - ERROR - XML parsing failed for 'midz_cell10_25342': not well-formed (invalid token): line 4, column 4
+2024-10-23 15:02:06,010 - INFO - Retrying (2/3)...
+2024-10-23 15:02:06,014 - INFO - Retrying (2/3)...
+2024-10-23 15:02:06,015 - INFO - Retrying (2/3)...
+2024-10-23 15:02:06,017 - INFO - Retrying (3/3)...
+2024-10-23 15:02:06,022 - ERROR - Failed to resolve 'midz_cell10_25342' after 3 attempts.
+2024-10-23 15:02:06,022 - WARNING - No resolved name found for 'midz_cell10_25342'.
+2024-10-23 15:02:06,027 - INFO - Successfully processed 'fits_collection/2013.1.00034.S_SB_X5_GB_X6_MB_X7_midz_cell10_25342_sci.spw0_1_2_3.cont.I.image.fits'. Resolved using Unknown: 'Unknown'. MOC Details - Sky Fraction: 0.000000, Number of Cells: 1, Max Order: 10. Polygon: POLYGON ((149.6574563920478 1.7191108290945414, 149.64945278969537 1.7191108291645532, 149.6494527729563 1.7271108291710382, 149.65745640892698 1.727110829101036, 149.6574563920478 1.7191108290945414)).
+2024-10-23 15:02:06,029 - INFO - Extracted RA_WCS: 149.65345459090653, DEC_WCS: 1.7231108333332557 for fits_collection/2013.1.00034.S_SB_X5_GB_X6_MB_X7_midz_cell10_25342_sci.spw0_1_2_3.cont.I.image.fits.
+2024-10-23 15:02:06,034 - ERROR - XML parsing failed for 'UGC': not well-formed (invalid token): line 4, column 4
+2024-10-23 15:02:06,035 - INFO - Retrying (3/3)...
+2024-10-23 15:02:06,035 - ERROR - Failed to resolve 'UGC' after 3 attempts.
+2024-10-23 15:02:06,036 - WARNING - No resolved name found for 'UGC'.
+2024-10-23 15:02:06,041 - INFO - Successfully processed 'fits_collection/UGC_09618_S_2MASS_H.fits'. Resolved using Unknown: 'Unknown'. MOC Details - Sky Fraction: 0.000004, Number of Cells: 26, Max Order: 10. Polygon: POLYGON ((224.30832666152753 24.322796352792704, 224.14402273847247 24.322796352792704, 224.14363977003902 24.90445743723609, 224.308709629961 24.90445743723609, 224.30832666152753 24.322796352792704)).
+2024-10-23 15:02:06,043 - INFO - Extracted RA_WCS: 224.2261747, DEC_WCS: 24.61364929999999 for fits_collection/UGC_09618_S_2MASS_H.fits.
+2024-10-23 15:02:06,048 - ERROR - XML parsing failed for '2-38011': not well-formed (invalid token): line 4, column 4
+2024-10-23 15:02:06,049 - ERROR - XML parsing failed for 'G351.702': not well-formed (invalid token): line 4, column 4
+2024-10-23 15:02:06,049 - INFO - Retrying (3/3)...
+2024-10-23 15:02:06,049 - ERROR - XML parsing failed for 'r143': not well-formed (invalid token): line 4, column 4
+2024-10-23 15:02:06,050 - ERROR - XML parsing failed for '022 P9870': not well-formed (invalid token): line 4, column 4
+2024-10-23 15:02:06,051 - INFO - Retrying (3/3)...
+2024-10-23 15:02:06,053 - ERROR - Failed to resolve '2-38011' after 3 attempts.
+2024-10-23 15:02:06,053 - INFO - Retrying (3/3)...
+2024-10-23 15:02:06,053 - INFO - Retrying (3/3)...
+2024-10-23 15:02:06,054 - ERROR - Failed to resolve 'G351.702' after 3 attempts.
+2024-10-23 15:02:06,058 - WARNING - No resolved name found for '2-38011'.
+2024-10-23 15:02:06,058 - ERROR - Failed to resolve 'r143' after 3 attempts.
+2024-10-23 15:02:06,059 - ERROR - Failed to resolve '022 P9870' after 3 attempts.
+2024-10-23 15:02:06,059 - WARNING - No resolved name found for 'G351.702'.
+2024-10-23 15:02:06,065 - INFO - Successfully processed 'fits_collection/2013.1.01292.S_SB_X4eb_GB_X4ec_MB_X4ed_2-38011_sci.spw0_1_2_3.cont.I.image.fits'. Resolved using Unknown: 'Unknown'. MOC Details - Sky Fraction: 0.000000, Number of Cells: 2, Max Order: 10. Polygon: POLYGON ((150.1150155371495 2.5204941600668986, 150.10675754799556 2.520494160163891, 150.10675752187876 2.528744160170992, 150.11501556346047 2.5287441600740106, 150.1150155371495 2.5204941600668986)).
+2024-10-23 15:02:06,071 - WARNING - No resolved name found for 'r143'.
+2024-10-23 15:02:06,071 - WARNING - No resolved name found for '022 P9870'.
+2024-10-23 15:02:06,074 - INFO - Extracted RA_WCS: 150.11088654262102, DEC_WCS: 2.524619166666135 for fits_collection/2013.1.01292.S_SB_X4eb_GB_X4ec_MB_X4ed_2-38011_sci.spw0_1_2_3.cont.I.image.fits.
+2024-10-23 15:02:06,075 - INFO - Successfully processed 'fits_collection/G351.702+0.672_atlasgal.fits'. Resolved using Unknown: 'Unknown'. MOC Details - Sky Fraction: 0.000002, Number of Cells: 19, Max Order: 10. Polygon: POLYGON ((351.8408317015 0.6008334535, 351.5524983105 0.6008334535, 351.5524983105 0.7608334855, 351.8408317015 0.7608334855, 351.8408317015 0.6008334535)).
+2024-10-23 15:02:06,105 - INFO - Successfully processed 'fits_collection/5GHz_n_f.fits'. Resolved using Unknown: 'Unknown'. MOC Details - Sky Fraction: 0.000000, Number of Cells: 1, Max Order: 10. Polygon: POLYGON ((84.72666731996323 -69.13945793625412, 84.7030312755644 -69.13945790413119, 84.70303591953338 -69.13104123761946, 84.72666285634249 -69.13104126973, 84.72666731996323 -69.13945793625412)).
+2024-10-23 15:02:06,108 - INFO - Successfully processed 'fits_collection/N2.20100426.52760.fits'. Resolved using Unknown: 'Unknown'. MOC Details - Sky Fraction: 0.000000, Number of Cells: 1, Max Order: 10. Polygon: POLYGON ((245.48389331567262 -20.72286080192529, 245.48238002853103 -20.722854576681225, 245.48238669139835 -20.72143919479691, 245.48389996439798 -20.7214454199828, 245.48389331567262 -20.72286080192529)).
+2024-10-23 15:02:06,109 - INFO - Extracted GLON_WCS: 351.696665006, GLAT_WCS: 0.6808334695 for fits_collection/G351.702+0.672_atlasgal.fits.
+2024-10-23 15:02:06,113 - INFO - Extracted RA_WCS: 84.71484934285212, DEC_WCS: -69.13524999240765 for fits_collection/5GHz_n_f.fits.
+2024-10-23 15:02:06,115 - INFO - Extracted RA_WCS: 245.48314, DEC_WCS: -20.72215 for fits_collection/N2.20100426.52760.fits.
+2024-10-23 15:02:07,241 - INFO - Resolved 'SNR1987A' to 'SNR1987A' using VizieR with name 'SNR1987A'.
+2024-10-23 15:02:07,461 - INFO - Resolved 'SNR1987A' to 'SNR1987A' using VizieR with name 'SNR1987A'.
+2024-10-23 15:02:07,481 - INFO - Successfully processed 'fits_collection/SNaverage5-0.fits'. Resolved using VizieR: 'SNR1987A'. MOC Details - Sky Fraction: 0.000000, Number of Cells: 3, Max Order: 10. Polygon: POLYGON ((83.96216077193111 -69.30305555555553, 83.7723515009734 -69.30305555555553, 83.7726428162207 -69.2359722222222, 83.96186581524327 -69.2359722222222, 83.96216077193111 -69.30305555555553)).
+2024-10-23 15:02:07,482 - INFO - Successfully processed 'fits_collection/SN1987A_cut_35_smHB.fits'. Resolved using VizieR: 'SNR1987A'. MOC Details - Sky Fraction: 0.000000, Number of Cells: 3, Max Order: 10. Polygon: POLYGON ((83.98078838261291 -69.31003927205, 83.75255161738708 -69.31003927205, 83.75297519652439 -69.22940072795001, 83.98036480347561 -69.22940072795001, 83.98078838261291 -69.31003927205)).
+2024-10-23 15:02:07,482 - INFO - Extracted RA_WCS: 83.86725522458315, DEC_WCS: -69.26951388888885 for fits_collection/SNaverage5-0.fits.
+2024-10-23 15:02:07,482 - INFO - Extracted RA_WCS: 83.86667, DEC_WCS: -69.26972 for fits_collection/SN1987A_cut_35_smHB.fits.
+2024-10-23 15:02:07,488 - INFO - Missing values after homogenization:
+FITS_File           0
+Polygon             0
+MOC                 0
+Polygon_Coords      0
+RA_WCS              4
+DEC_WCS             4
+NAXIS               0
+NAXIS1              0
+NAXIS2              0
+OBJECT              8
+RA                 15
+DEC                15
+RADESYS             0
+DATE-OBS           13
+MJD-OBS            15
+EXPTIME            13
+INSTRUME           11
+TELESCOP            8
+JD                 16
+Resolved_Object     0
+GLON_WCS           12
+GLAT_WCS           12
+NAXIS3             13
+NAXIS4             13
+dtype: int64
+2024-10-23 15:02:07,490 - INFO - Metadata successfully saved to output_metadata.csv.
+2024-10-23 15:02:07,490 - INFO - FITS metadata extraction and homogenization process completed successfully.
+2024-10-23 15:16:52,403 - INFO - Starting processing of FITS files.
+2024-10-23 15:16:52,418 - INFO - Processing file: fits_collection/G327.617-0.364_I4.fits
+2024-10-23 15:16:52,419 - INFO - Processing file: fits_collection/SN1987A_cut_35_smHB.fits
+2024-10-23 15:16:52,419 - INFO - Processing file: fits_collection/G351.702+0.672_atlasgal.fits
+2024-10-23 15:16:52,419 - INFO - Processing file: fits_collection/5GHz_n_f.fits
+2024-10-23 15:16:52,420 - INFO - Processing file: fits_collection/G351.632-0.459_atlasgal.fits
+2024-10-23 15:16:52,505 - INFO - Inferred object name 'G327.617-0.364' for file 'fits_collection/G327.617-0.364_I4.fits'.
+2024-10-23 15:16:52,513 - INFO - Successfully processed 'fits_collection/SN1987A_cut_35_smHB.fits'. Resolved using VizieR: 'SNR1987A'. MOC Details - Sky Fraction: 0.000000, Number of Cells: 3, Max Order: 10. Polygon: POLYGON ((83.98078838261291 -69.31003927205, 83.75255161738708 -69.31003927205, 83.75297519652439 -69.22940072795001, 83.98036480347561 -69.22940072795001, 83.98078838261291 -69.31003927205)).
+2024-10-23 15:16:52,518 - INFO - Inferred object name 'G351.702' for file 'fits_collection/G351.702+0.672_atlasgal.fits'.
+2024-10-23 15:16:52,520 - INFO - Successfully processed 'fits_collection/G327.617-0.364_I4.fits'. Resolved using VizieR: 'G327.617-0.364'. MOC Details - Sky Fraction: 0.000001, Number of Cells: 11, Max Order: 10. Polygon: POLYGON ((327.7141602095 -0.4191667505, 327.5158268365 -0.4191667505, 327.5158268365 -0.3091667285, 327.7141602095 -0.3091667285, 327.7141602095 -0.4191667505)).
+2024-10-23 15:16:52,521 - INFO - Inferred object name 'G351.632-0.459' for file 'fits_collection/G351.632-0.459_atlasgal.fits'.
+2024-10-23 15:16:52,523 - INFO - Extracted RA_WCS: 83.86667, DEC_WCS: -69.26972 for fits_collection/SN1987A_cut_35_smHB.fits.
+2024-10-23 15:16:52,523 - INFO - Extracted GLON_WCS: 327.614993523, GLAT_WCS: -0.3641667395 for fits_collection/G327.617-0.364_I4.fits.
+2024-10-23 15:16:52,525 - INFO - Successfully processed 'fits_collection/G351.702+0.672_atlasgal.fits'. Resolved using Unknown: 'Unknown'. MOC Details - Sky Fraction: 0.000002, Number of Cells: 19, Max Order: 10. Polygon: POLYGON ((351.8408317015 0.6008334535, 351.5524983105 0.6008334535, 351.5524983105 0.7608334855, 351.8408317015 0.7608334855, 351.8408317015 0.6008334535)).
+2024-10-23 15:16:52,548 - INFO - Successfully processed 'fits_collection/G351.632-0.459_atlasgal.fits'. Resolved using VizieR: 'G351.632-0.459'. MOC Details - Sky Fraction: 0.000001, Number of Cells: 8, Max Order: 10. Polygon: POLYGON ((351.7458316825 -0.5191667704999999, 351.5408316415 -0.5191667704999999, 351.5408316415 -0.4058334145, 351.7458316825 -0.4058334145, 351.7458316825 -0.5191667704999999)).
+2024-10-23 15:16:52,554 - INFO - Successfully processed 'fits_collection/5GHz_n_f.fits'. Resolved using Unknown: 'Unknown'. MOC Details - Sky Fraction: 0.000000, Number of Cells: 1, Max Order: 10. Polygon: POLYGON ((84.72666731996323 -69.13945793625412, 84.7030312755644 -69.13945790413119, 84.70303591953338 -69.13104123761946, 84.72666285634249 -69.13104126973, 84.72666731996323 -69.13945793625412)).
+2024-10-23 15:16:52,555 - INFO - Processing file: fits_collection/UGC_09618_S_2MASS_H.fits
+2024-10-23 15:16:52,555 - INFO - Processing file: fits_collection/UGC_09618_2MASS_H.fits
+2024-10-23 15:16:52,556 - INFO - Extracted GLON_WCS: 351.696665006, GLAT_WCS: 0.6808334695 for fits_collection/G351.702+0.672_atlasgal.fits.
+2024-10-23 15:16:52,556 - INFO - Extracted GLON_WCS: 351.643331662, GLAT_WCS: -0.46250009249999996 for fits_collection/G351.632-0.459_atlasgal.fits.
+2024-10-23 15:16:52,557 - INFO - Extracted RA_WCS: 84.71484934285212, DEC_WCS: -69.13524999240765 for fits_collection/5GHz_n_f.fits.
+2024-10-23 15:16:52,558 - INFO - Processing file: fits_collection/SNaverage5-0.fits
+2024-10-23 15:16:52,559 - INFO - Inferred object name 'UGC' for file 'fits_collection/UGC_09618_S_2MASS_H.fits'.
+2024-10-23 15:16:52,560 - INFO - Processing file: fits_collection/2013.1.01292.S_SB_X4eb_GB_X4ec_MB_X4ed_2-38011_sci.spw0_1_2_3.cont.I.image.fits
+2024-10-23 15:16:52,560 - INFO - Inferred object name 'UGC' for file 'fits_collection/UGC_09618_2MASS_H.fits'.
+2024-10-23 15:16:52,561 - INFO - Processing file: fits_collection/N2.20100426.52760.fits
+2024-10-23 15:16:52,565 - INFO - Successfully processed 'fits_collection/UGC_09618_S_2MASS_H.fits'. Resolved using Unknown: 'Unknown'. MOC Details - Sky Fraction: 0.000004, Number of Cells: 26, Max Order: 10. Polygon: POLYGON ((224.30832666152753 24.322796352792704, 224.14402273847247 24.322796352792704, 224.14363977003902 24.90445743723609, 224.308709629961 24.90445743723609, 224.30832666152753 24.322796352792704)).
+2024-10-23 15:16:52,569 - INFO - Successfully processed 'fits_collection/UGC_09618_2MASS_H.fits'. Resolved using Unknown: 'Unknown'. MOC Details - Sky Fraction: 0.000004, Number of Cells: 26, Max Order: 10. Polygon: POLYGON ((224.30832666152753 24.322796352792704, 224.14402273847247 24.322796352792704, 224.14363977003902 24.90445743723609, 224.308709629961 24.90445743723609, 224.30832666152753 24.322796352792704)).
+2024-10-23 15:16:52,582 - INFO - Successfully processed 'fits_collection/SNaverage5-0.fits'. Resolved using VizieR: 'SNR1987A'. MOC Details - Sky Fraction: 0.000000, Number of Cells: 3, Max Order: 10. Polygon: POLYGON ((83.96216077193111 -69.30305555555553, 83.7723515009734 -69.30305555555553, 83.7726428162207 -69.2359722222222, 83.96186581524327 -69.2359722222222, 83.96216077193111 -69.30305555555553)).
+2024-10-23 15:16:52,588 - INFO - Successfully processed 'fits_collection/2013.1.01292.S_SB_X4eb_GB_X4ec_MB_X4ed_2-38011_sci.spw0_1_2_3.cont.I.image.fits'. Resolved using Unknown: 'Unknown'. MOC Details - Sky Fraction: 0.000000, Number of Cells: 2, Max Order: 10. Polygon: POLYGON ((150.1150155371495 2.5204941600668986, 150.10675754799556 2.520494160163891, 150.10675752187876 2.528744160170992, 150.11501556346047 2.5287441600740106, 150.1150155371495 2.5204941600668986)).
+2024-10-23 15:16:52,588 - INFO - Extracted RA_WCS: 224.2261747, DEC_WCS: 24.61364929999999 for fits_collection/UGC_09618_S_2MASS_H.fits.
+2024-10-23 15:16:52,589 - INFO - Extracted RA_WCS: 224.2261747, DEC_WCS: 24.61364929999999 for fits_collection/UGC_09618_2MASS_H.fits.
+2024-10-23 15:16:52,601 - INFO - Extracted RA_WCS: 83.86725522458315, DEC_WCS: -69.26951388888885 for fits_collection/SNaverage5-0.fits.
+2024-10-23 15:16:52,601 - INFO - Successfully processed 'fits_collection/N2.20100426.52760.fits'. Resolved using Unknown: 'Unknown'. MOC Details - Sky Fraction: 0.000000, Number of Cells: 1, Max Order: 10. Polygon: POLYGON ((245.48389331567262 -20.72286080192529, 245.48238002853103 -20.722854576681225, 245.48238669139835 -20.72143919479691, 245.48389996439798 -20.7214454199828, 245.48389331567262 -20.72286080192529)).
+2024-10-23 15:16:52,602 - INFO - Extracted RA_WCS: 150.11088654262102, DEC_WCS: 2.524619166666135 for fits_collection/2013.1.01292.S_SB_X4eb_GB_X4ec_MB_X4ed_2-38011_sci.spw0_1_2_3.cont.I.image.fits.
+2024-10-23 15:16:52,603 - INFO - Processing file: fits_collection/NGC_4486_MIPS_M1.fits
+2024-10-23 15:16:52,603 - INFO - Processing file: fits_collection/av_galcen_2mass.fits
+2024-10-23 15:16:52,604 - INFO - Processing file: fits_collection/id12_GAL-Survey-GC.fpsf.fits
+2024-10-23 15:16:52,604 - INFO - Extracted RA_WCS: 245.48314, DEC_WCS: -20.72215 for fits_collection/N2.20100426.52760.fits.
+2024-10-23 15:16:52,605 - INFO - Processing file: fits_collection/SN1987A_87_smHB.fits
+2024-10-23 15:16:52,630 - INFO - Inferred object name 'id12' for file 'fits_collection/id12_GAL-Survey-GC.fpsf.fits'.
+2024-10-23 15:16:52,633 - INFO - Successfully processed 'fits_collection/NGC_4486_MIPS_M1.fits'. Resolved using Unknown: 'Unknown'. MOC Details - Sky Fraction: 0.000018, Number of Cells: 90, Max Order: 10. Polygon: POLYGON ((187.47777580413705 11.471189399348724, 187.2141455382065 11.57841734224368, 188.01807617563932 13.463669558462998, 188.28324439567785 13.355678936359176, 187.47777580413705 11.471189399348724)).
+2024-10-23 15:16:52,637 - INFO - Inferred object name 'av' for file 'fits_collection/av_galcen_2mass.fits'.
+2024-10-23 15:16:52,641 - INFO - Processing file: fits_collection/av_galcen_spitzer.fits
+2024-10-23 15:16:52,664 - INFO - Successfully processed 'fits_collection/id12_GAL-Survey-GC.fpsf.fits'. Resolved using Unknown: 'Unknown'. MOC Details - Sky Fraction: 0.067794, Number of Cells: 4034, Max Order: 10. Polygon: POLYGON ((34.933335155456 -17.933334268736, 324.9999981744 -17.933334268736, 324.9999981744 18.00000093888, 34.933335155456 18.00000093888, 34.933335155456 -17.933334268736)).
+2024-10-23 15:16:52,666 - INFO - Extracted RA_WCS: 187.74691322832936, DEC_WCS: 12.467659296574459 for fits_collection/NGC_4486_MIPS_M1.fits.
+2024-10-23 15:16:52,678 - INFO - Successfully processed 'fits_collection/SN1987A_87_smHB.fits'. Resolved using Simbad: 'SN 1987A'. MOC Details - Sky Fraction: 0.000004, Number of Cells: 21, Max Order: 10. Polygon: POLYGON ((84.3173092857228 -69.45067849200001, 83.4160307142772 -69.45067849200001, 83.42348958848474 -69.088761508, 84.30985041151526 -69.088761508, 84.3173092857228 -69.45067849200001)).
+2024-10-23 15:16:52,681 - INFO - Successfully processed 'fits_collection/av_galcen_2mass.fits'. Resolved using Unknown: 'Unknown'. MOC Details - Sky Fraction: 0.000169, Number of Cells: 255, Max Order: 10. Polygon: POLYGON ((267.78736491517896 -30.278549885775647, 265.00936689128497 -30.278142689934317, 265.0460054752501 -27.546134398469633, 267.7517289947569 -27.546498168041428, 267.78736491517896 -30.278549885775647)).
+2024-10-23 15:16:52,683 - INFO - Extracted GLON_WCS: 359.966666664928, GLAT_WCS: 0.033333335072 for fits_collection/id12_GAL-Survey-GC.fpsf.fits.
+2024-10-23 15:16:52,684 - INFO - Processing file: fits_collection/2013.1.00034.S_SB_X5_GB_X6_MB_X7_midz_cell10_25342_sci.spw0_1_2_3.cont.I.image.fits
+2024-10-23 15:16:52,685 - INFO - Inferred object name 'av' for file 'fits_collection/av_galcen_spitzer.fits'.
+2024-10-23 15:16:52,685 - INFO - Extracted RA_WCS: 83.86667, DEC_WCS: -69.26972 for fits_collection/SN1987A_87_smHB.fits.
+2024-10-23 15:16:52,686 - INFO - Extracted RA_WCS: 266.3986089730605, DEC_WCS: -28.91926301125171 for fits_collection/av_galcen_2mass.fits.
+2024-10-23 15:16:52,692 - INFO - Successfully processed 'fits_collection/av_galcen_spitzer.fits'. Resolved using Unknown: 'Unknown'. MOC Details - Sky Fraction: 0.000166, Number of Cells: 229, Max Order: 10. Polygon: POLYGON ((267.78718161103103 -30.190475586624736, 265.0116341916512 -30.19006981604887, 265.04727937434296 -27.524670707324933, 267.752511907322 -27.525034154695774, 267.78718161103103 -30.190475586624736)).
+2024-10-23 15:16:52,700 - INFO - Successfully processed 'fits_collection/2013.1.00034.S_SB_X5_GB_X6_MB_X7_midz_cell10_25342_sci.spw0_1_2_3.cont.I.image.fits'. Resolved using Unknown: 'Unknown'. MOC Details - Sky Fraction: 0.000000, Number of Cells: 1, Max Order: 10. Polygon: POLYGON ((149.6574563920478 1.7191108290945414, 149.64945278969537 1.7191108291645532, 149.6494527729563 1.7271108291710382, 149.65745640892698 1.727110829101036, 149.6574563920478 1.7191108290945414)).
+2024-10-23 15:16:52,700 - INFO - Extracted RA_WCS: 266.3996440174536, DEC_WCS: -28.864479014275368 for fits_collection/av_galcen_spitzer.fits.
+2024-10-23 15:16:52,701 - INFO - Extracted RA_WCS: 149.65345459090653, DEC_WCS: 1.7231108333332557 for fits_collection/2013.1.00034.S_SB_X5_GB_X6_MB_X7_midz_cell10_25342_sci.spw0_1_2_3.cont.I.image.fits.
+2024-10-23 15:16:52,709 - INFO - Missing values after homogenization:
+FITS_File           0
+Polygon             0
+MOC                 0
+Polygon_Coords      0
+RA_WCS              4
+DEC_WCS             4
+NAXIS               0
+NAXIS1              0
+NAXIS2              0
+OBJECT              8
+RA                 15
+DEC                15
+RADESYS             0
+DATE-OBS           13
+MJD-OBS            15
+EXPTIME            13
+INSTRUME           11
+TELESCOP            8
+JD                 16
+Resolved_Object     0
+GLON_WCS           12
+GLAT_WCS           12
+NAXIS3             13
+NAXIS4             13
+dtype: int64
+2024-10-23 15:16:52,710 - INFO - Finished processing FITS files.
+2024-10-23 15:16:56,108 - INFO - Metadata successfully saved to metadata.csv.
+2024-10-23 15:16:56,109 - INFO - Metadata saved to metadata.csv.
+2024-10-23 15:16:58,761 - INFO - Starting plotting of MOCs and polygons.
+2024-10-23 15:16:58,762 - INFO - Plots will be saved to: plots
+2024-10-23 15:16:58,762 - INFO - No specific selection criteria provided. All FITS files will be plotted.
+2024-10-23 15:16:58,763 - INFO - Generating 2 plots.
+2024-10-23 15:16:58,796 - INFO - Calling _reproject_full in non-dask mode
+2024-10-23 15:17:00,115 - INFO - Plot saved as SN1987A_cut_35_smHB.png
+2024-10-23 15:17:00,116 - INFO - Plot saved: plots/SN1987A_cut_35_smHB.png
+2024-10-23 15:17:00,138 - INFO - Calling _reproject_full in non-dask mode
+2024-10-23 15:17:01,323 - INFO - Plot saved as G327.617-0.364_I4.png
+2024-10-23 15:17:01,323 - INFO - Plot saved: plots/G327.617-0.364_I4.png
+2024-10-23 15:17:01,324 - INFO - Finished plotting of MOCs and polygons.
+2024-10-23 15:17:11,820 - INFO - Testing search by point: RA=150.0, Dec=2.2
+2024-10-23 15:17:11,825 - INFO - FITS files containing the point (RA=150.0, Dec=2.2):
+2024-10-23 15:17:22,870 - INFO - Testing search by circular region: Center RA=150.0, Dec=2.2, Radius=1.0 degrees
+2024-10-23 15:17:22,876 - INFO - FITS files intersecting the circular region (RA=150.0, Dec=2.2, Radius=1.0 degrees):
+2024-10-23 15:17:25,106 - INFO - Testing search by polygonal region with coordinates: [(149.0, 1.0), (151.0, 1.0), (151.0, 3.0), (149.0, 3.0)]
+2024-10-23 15:17:25,110 - INFO - FITS files intersecting the polygonal region:
