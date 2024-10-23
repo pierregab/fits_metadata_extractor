@@ -1,0 +1,7 @@
+numpy
+pandas
+requests
+astropy
+astroquery
+mocpy
+filelock

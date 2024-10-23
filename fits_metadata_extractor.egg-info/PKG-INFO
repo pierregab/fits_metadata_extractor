@@ -1,0 +1,17 @@
+Metadata-Version: 2.1
+Name: fits_metadata_extractor
+Version: 1.0.0
+Summary: FITS Metadata Extraction and Homogenization Tool
+Author: Bibal Sobeaux Pierre Gabriel
+Author-email: your_email@example.com
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.7
+Requires-Dist: numpy
+Requires-Dist: pandas
+Requires-Dist: requests
+Requires-Dist: astropy
+Requires-Dist: astroquery
+Requires-Dist: mocpy
+Requires-Dist: filelock
