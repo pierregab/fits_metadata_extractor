@@ -1,5 +1,6 @@
 # fits_metadata_extractor/plotter.py
 
+# Import statements at the top of plotter.py
 import os
 import logging
 import json
@@ -11,13 +12,18 @@ from astropy.io import fits
 from astropy.wcs import WCS
 import warnings
 from astropy.utils.exceptions import AstropyWarning
-from mocpy import MOC
-from astropy.coordinates import SkyCoord
-import astropy.units as u
-from reproject import reproject_interp
 from astropy.wcs import FITSFixedWarning
 from regions import PolygonSkyRegion
 import pandas as pd
+from matplotlib.patches import Polygon as MplPolygon
+from shapely.geometry import Polygon
+from shapely.ops import unary_union
+from reproject import reproject_interp
+from astropy.coordinates import SkyCoord
+import astropy.units as u
+from mocpy import MOC
+from .search import search_fits_by_point, search_fits_by_region
+
 
 
 
@@ -395,3 +401,319 @@ def plot_moc_and_polygon_from_dataset_notebook(
         except Exception as e:
             logging.error(f"Failed to plot '{fits_file}': {e}")
             continue
+
+def test():
+    return "Test successful."
+
+def plot_search_region_and_find_fits(
+    metadata_df, 
+    region, 
+    input_dir, 
+    output_dir='search_plots', 
+    max_plots=None, 
+    plot_search_region=True
+):
+    """
+    Plots the search region and overlays the coverage of matching FITS files using WCS transformations.
+
+    Parameters:
+        metadata_df (pandas.DataFrame):
+            DataFrame containing metadata for FITS files.
+            Expected columns:
+                - 'FITS_File': Basename of the FITS file.
+                - 'Polygon_Coords': JSON string of polygon coordinates.
+                - 'MOC': Serialized MOC string.
+                - 'Coordinate_Frame': Coordinate frame of the polygon ('icrs' or 'galactic').
+
+        region (dict):
+            Dictionary defining the search region. Supported types:
+                - Point:
+                    {
+                        'type': 'point',
+                        'coordinates': (ra, dec),  # In degrees, ICRS frame
+                        'coordinate_frame': 'icrs'  # or 'galactic'
+                    }
+                - Circle:
+                    {
+                        'type': 'circle',
+                        'center': (ra, dec),  # In degrees, ICRS frame
+                        'radius': radius_deg    # Radius in degrees
+                    }
+                - Polygon:
+                    {
+                        'type': 'polygon',
+                        'coordinates': [(ra1, dec1), (ra2, dec2), ...],  # In degrees, ICRS frame
+                    }
+
+        input_dir (str):
+            Directory path where the FITS files are located.
+
+        output_dir (str, optional):
+            Directory to save the generated plot. Defaults to 'search_plots'.
+
+        max_plots (int, optional):
+            Maximum number of FITS file plots to generate. Useful for testing.
+            If None, plots all matching FITS files.
+
+        plot_search_region (bool, optional):
+            If True, plots the search region on the map. Defaults to True.
+
+    Returns:
+        None
+    """
+    import os
+    import logging
+    import matplotlib.pyplot as plt
+    from astropy.coordinates import SkyCoord
+    import astropy.units as u
+    from tqdm.notebook import tqdm
+    from mocpy import MOC
+    import numpy as np
+    import json
+    import pandas as pd
+    from astropy.io import fits
+    from astropy.wcs import WCS
+    from astropy.utils.exceptions import AstropyWarning
+    from reproject import reproject_interp
+    import warnings
+    from regions import PolygonSkyRegion
+    from shapely.geometry import Polygon as ShapelyPolygon
+
+    # Ensure necessary functions are imported
+    if 'search_fits_by_point' not in globals() and 'search_fits_by_region' not in globals():
+        raise ImportError("Search functions from 'search.py' must be imported before using this plotting function.")
+
+    # Create the output directory if it doesn't exist
+    os.makedirs(output_dir, exist_ok=True)
+    logging.info(f"Plots will be saved to: {output_dir}")
+
+    # Determine the type of search and find matching FITS files
+    if region['type'] == 'point':
+        ra, dec = region['coordinates']
+        coordinate_frame = region.get('coordinate_frame', 'icrs').lower()
+        if coordinate_frame == 'icrs':
+            matching_df = search_fits_by_point(metadata_df, ra, dec)
+        elif coordinate_frame == 'galactic':
+            # Convert point to ICRS for searching
+            sky_coord = SkyCoord(l=ra * u.deg, b=dec * u.deg, frame='galactic').icrs
+            matching_df = search_fits_by_point(metadata_df, sky_coord.ra.deg, sky_coord.dec.deg)
+        else:
+            logging.error(f"Unsupported coordinate frame: {coordinate_frame}")
+            return
+        plot_title = f"Search Region: Point (RA={ra}, Dec={dec})"
+    elif region['type'] == 'circle':
+        center_ra, center_dec = region['center']
+        radius = region['radius']
+        search_region = {
+            'type': 'circle',
+            'center': (center_ra, center_dec),
+            'radius': radius
+        }
+        matching_df = search_fits_by_region(metadata_df, search_region)
+        plot_title = f"Search Region: Circle (RA={center_ra}, Dec={center_dec}, Radius={radius}°)"
+    elif region['type'] == 'polygon':
+        coordinates = region['coordinates']
+        search_region = {
+            'type': 'polygon',
+            'coordinates': coordinates
+        }
+        matching_df = search_fits_by_region(metadata_df, search_region)
+        plot_title = f"Search Region: Polygon ({len(coordinates)} vertices)"
+    else:
+        logging.error(f"Unsupported region type: {region['type']}")
+        return
+
+    if matching_df.empty:
+        logging.warning("No FITS files matched the search criteria.")
+        return
+
+    # Limit the number of plots if max_plots is set
+    total_plots = len(matching_df) if max_plots is None else min(len(matching_df), max_plots)
+    logging.info(f"Generating plots for {total_plots} matching FITS files.")
+
+    # Initialize a matplotlib figure with WCS projection (Mollweide)
+    # Define a WCS for the Mollweide projection
+    main_wcs = WCS(naxis=2)
+    # Set the CTYPEs for Mollweide projection
+    main_wcs.wcs.ctype = ["RA---MOL", "DEC--MOL"]
+    # Set reference pixel and coordinate values
+    main_wcs.wcs.crval = [0, 0]  # Reference coordinates (RA, Dec)
+    main_wcs.wcs.crpix = [0, 0]  # Reference pixel
+    # Set pixel scale (degrees per pixel)
+    main_wcs.wcs.cdelt = np.array([-360.0 / 3600, 180.0 / 3600])  # degrees per pixel
+    main_wcs.wcs.cunit = ["deg", "deg"]
+
+    fig = plt.figure(figsize=(12, 6))
+    ax = fig.add_subplot(111, projection=main_wcs)
+    ax.grid(True, color='lightgray')
+    ax.set_title(plot_title, pad=20)
+
+    # Plot the search region if required
+    if plot_search_region:
+        if region['type'] == 'point':
+            ra, dec = region['coordinates']
+            coordinate_frame = region.get('coordinate_frame', 'icrs').lower()
+            if coordinate_frame == 'icrs':
+                sky_coord = SkyCoord(ra=ra * u.deg, dec=dec * u.deg, frame='icrs')
+            elif coordinate_frame == 'galactic':
+                sky_coord = SkyCoord(l=ra * u.deg, b=dec * u.deg, frame='galactic').icrs
+            ra_rad = sky_coord.ra.wrap_at(180 * u.deg).radian
+            dec_rad = sky_coord.dec.radian
+            ax.plot(ra_rad, dec_rad, marker='*', color='yellow', markersize=15, label='Search Point')
+        elif region['type'] == 'circle':
+            center_ra, center_dec = region['center']
+            radius = region['radius']
+            center = SkyCoord(ra=center_ra * u.deg, dec=center_dec * u.deg, frame='icrs')
+            # Create circle coordinates
+            angles = np.linspace(0, 2 * np.pi, 100)
+            ra_circle = center.ra.deg + (radius * np.cos(angles)) / np.cos(center.dec.radian)
+            dec_circle = center.dec.deg + radius * np.sin(angles)
+            sky_circle = SkyCoord(ra=ra_circle * u.deg, dec=dec_circle * u.deg, frame='icrs')
+            ra_rad = sky_circle.ra.wrap_at(180 * u.deg).radian
+            dec_rad = sky_circle.dec.radian
+            ax.plot(ra_rad, dec_rad, color='yellow', linestyle='--', linewidth=2, label='Search Circle')
+        elif region['type'] == 'polygon':
+            polygon_coords = region['coordinates']
+            sky_polygon = SkyCoord(
+                ra=[c[0] for c in polygon_coords] * u.deg,
+                dec=[c[1] for c in polygon_coords] * u.deg,
+                frame='icrs'
+            )
+            ra_rad = sky_polygon.ra.wrap_at(180 * u.deg).radian
+            dec_rad = sky_polygon.dec.radian
+            ax.plot(ra_rad, dec_rad, color='yellow', linestyle='-', linewidth=2, label='Search Polygon')
+
+    # Iterate over matching FITS files and plot their MOCs and polygons
+    for idx, row in tqdm(
+        matching_df.head(total_plots).iterrows(), 
+        total=total_plots, 
+        desc="Plotting FITS Coverages"
+    ):
+        fits_file = row.get('FITS_File', None)
+        polygon_coords_str = row.get('Polygon_Coords', None)
+        moc_str = row.get('MOC', None)
+
+        if pd.isnull(fits_file) or pd.isnull(polygon_coords_str) or pd.isnull(moc_str):
+            logging.warning(f"Missing data for FITS file in row {idx}. Skipping.")
+            continue
+
+        fits_path = os.path.join(input_dir, fits_file)
+        if not os.path.isfile(fits_path):
+            logging.error(f"FITS file not found: {fits_path}. Skipping.")
+            continue
+
+        try:
+            # Suppress warnings for FITS header parsing
+            with warnings.catch_warnings():
+                warnings.simplefilter('ignore', FITSFixedWarning)
+                warnings.simplefilter('ignore', AstropyWarning)
+                
+                # Determine the coordinate frame based on the FITS file's header
+                with fits.open(fits_path) as hdul:
+                    fits_header = hdul[0].header
+                    fits_wcs = WCS(fits_header)
+                    ctype1 = fits_wcs.wcs.ctype[0].upper()
+                    ctype2 = fits_wcs.wcs.ctype[1].upper()
+
+                    if 'RA' in ctype1 and 'DEC' in ctype2:
+                        coord_frame = 'icrs'  # Equatorial Coordinates
+                    elif 'GLON' in ctype1 and 'GLAT' in ctype2:
+                        coord_frame = 'galactic'  # Galactic Coordinates
+                    else:
+                        logging.error(f"Unsupported coordinate system in {fits_file}: {ctype1}, {ctype2}")
+                        continue  # Skip this FITS file
+
+                # Deserialize the MOC string
+                moc = MOC.from_string(moc_str)
+
+                # If the MOC is in a different coordinate frame, transform it to ICRS
+                if coord_frame == 'galactic':
+                    moc = moc.to_icrs()
+
+                # Plot the MOC using the main WCS
+                try:
+                    # Use unique label only once
+                    label_moc = 'FITS MOC' if idx == matching_df.index[0] else ""
+                    moc.fill(ax=ax, wcs=main_wcs, alpha=0.3, label=label_moc, color='blue')
+                    moc.border(ax=ax, wcs=main_wcs, color='blue', linewidth=1.0)
+                except Exception as e:
+                    logging.error(f"Failed to plot MOC for '{fits_file}': {e}")
+                    continue
+
+                # Deserialize and plot the polygon
+                try:
+                    polygon_coords = json.loads(polygon_coords_str)
+                    if isinstance(polygon_coords, list):
+                        if all(isinstance(item, (int, float)) for item in polygon_coords):
+                            # Flat list detected, reshape into list of pairs
+                            if len(polygon_coords) % 2 != 0:
+                                logging.error(f"Polygon_Coords list length is not even: {polygon_coords}")
+                                continue
+                            else:
+                                polygon_coords = [polygon_coords[i:i+2] for i in range(0, len(polygon_coords), 2)]
+                        elif not all(isinstance(item, (list, tuple)) and len(item) == 2 for item in polygon_coords):
+                            logging.error(f"Invalid Polygon_Coords format: {polygon_coords}")
+                            continue
+                    else:
+                        logging.error(f"Polygon_Coords is not a list or JSON string: {polygon_coords}")
+                        continue
+
+                    # Extract RA/GLON and Dec/GLAT from polygon coordinates
+                    x_coord, y_coord = zip(*polygon_coords)
+                    x_coord = np.array(x_coord, dtype=np.float64)
+                    y_coord = np.array(y_coord, dtype=np.float64)
+
+                    # Check for NaN or infinite values
+                    if not (np.isfinite(x_coord).all() and np.isfinite(y_coord).all()):
+                        logging.error("RA/GLON or Dec/GLAT contains non-finite values.")
+                        continue
+
+                    # Close the polygon by adding the first point at the end if not already closed
+                    if (x_coord[0], y_coord[0]) != (x_coord[-1], y_coord[-1]):
+                        x_coord = np.append(x_coord, x_coord[0])
+                        y_coord = np.append(y_coord, y_coord[0])
+
+                    # Create SkyCoord object for the polygon
+                    if coord_frame == 'icrs':
+                        sky_coords = SkyCoord(ra=x_coord * u.deg, dec=y_coord * u.deg, frame='icrs')
+                    elif coord_frame == 'galactic':
+                        sky_coords = SkyCoord(l=x_coord * u.deg, b=y_coord * u.deg, frame='galactic').icrs
+                    else:
+                        logging.error("Unknown coordinate frame. Cannot create SkyCoord object.")
+                        continue
+
+                    # Convert to radians for plotting
+                    ra_rad = sky_coords.ra.wrap_at(180 * u.deg).radian
+                    dec_rad = sky_coords.dec.radian
+
+                    # Use unique label only once
+                    label_polygon = 'FITS Polygon' if idx == matching_df.index[0] else ""
+                    ax.plot(
+                        ra_rad,
+                        dec_rad,
+                        color='green',
+                        linewidth=1,
+                        label=label_polygon
+                    )
+
+                except json.JSONDecodeError as e:
+                    logging.error(f"Failed to decode Polygon_Coords for '{fits_file}': {e}")
+                    continue
+                except Exception as e:
+                    logging.error(f"Failed to plot polygon for '{fits_file}': {e}")
+                    continue
+
+        except Exception as e:
+            logging.error(f"Failed to process FITS file '{fits_file}': {e}")
+            continue
+
+    # Finalize the plot
+    # To avoid duplicate labels in the legend
+    handles, labels = ax.get_legend_handles_labels()
+    unique = dict(zip(labels, handles))
+    ax.legend(unique.values(), unique.keys(), loc='upper right', fontsize='small')
+
+    output_file = os.path.join(output_dir, "search_region_and_fits.png")
+    plt.savefig(output_file, dpi=300, bbox_inches='tight')
+    logging.info(f"Search region and matching FITS coverages plotted and saved to '{output_file}'")
+    plt.show()
