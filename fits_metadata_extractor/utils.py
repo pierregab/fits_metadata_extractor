@@ -86,6 +86,23 @@ def homogenize_metadata(df):
     else:
         logging.warning("Column 'Resolved_Object' not found in DataFrame.")
 
+    # Ensure 'Coordinate_Frame' is present and normalized
+    if 'Coordinate_Frame' not in df.columns:
+        df['Coordinate_Frame'] = 'icrs'  # Default to 'icrs' if not specified
+        logging.warning("Column 'Coordinate_Frame' was missing and has been added with default value 'icrs'.")
+    else:
+        # Fill missing values with 'icrs'
+        df['Coordinate_Frame'] = df['Coordinate_Frame'].fillna('icrs')
+        # Normalize the coordinate frame values
+        df['Coordinate_Frame'] = df['Coordinate_Frame'].str.lower()
+        df['Coordinate_Frame'] = df['Coordinate_Frame'].replace({
+            'fk5': 'icrs',
+            'j2000': 'icrs',
+            'equatorial': 'icrs',
+            'galactic': 'galactic',
+            'icrs': 'icrs'
+        })
+
     # Ensure Polygon, MOC, and Polygon_Coords are present
     for col in ['Polygon', 'MOC', 'Polygon_Coords']:
         if col not in df.columns:
@@ -105,7 +122,7 @@ def homogenize_metadata(df):
         else:
             logging.warning(f"Column '{col}' not found in DataFrame.")
 
-    # **New Section: Handle RA_WCS and DEC_WCS Serialization**
+    # Handle RA_WCS and DEC_WCS Serialization
     for coord in ['RA_WCS', 'DEC_WCS']:
         if coord in df.columns:
             df[coord] = pd.to_numeric(df[coord], errors='coerce')
@@ -117,6 +134,7 @@ def homogenize_metadata(df):
     logging.info(f"Missing values after homogenization:\n{missing_values}")
 
     return df
+
 
 def save_metadata_to_csv(df, output_file):
     """

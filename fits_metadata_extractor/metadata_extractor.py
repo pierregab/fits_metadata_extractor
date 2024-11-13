@@ -75,8 +75,9 @@ class FITSMetadataExtractor:
             'Polygon': None,
             'MOC': None,
             'Polygon_Coords': None,
-            'RA_WCS': None,      # New column for RA via WCS
-            'DEC_WCS': None      # New column for DEC via WCS
+            'RA_WCS': None,
+            'DEC_WCS': None,
+            'Coordinate_Frame': 'unknown'  # Initialize with default value
         }
         try:
             with fits.open(fits_file) as hdul:
@@ -111,10 +112,30 @@ class FITSMetadataExtractor:
                 resolved_name, resolution_method = self.resolver.resolve_object_name(object_name)
                 metadata['Resolved_Object'] = resolved_name
 
+                # Initialize WCS object from header and determine coordinate frame
+                try:
+                    wcs = WCS(header)
+                    ctype1 = wcs.wcs.ctype[0]
+                    ctype2 = wcs.wcs.ctype[1]
+
+                    # Determine the coordinate frame
+                    if 'RA' in ctype1.upper() and 'DEC' in ctype2.upper():
+                        coord_frame = 'icrs'
+                    elif 'GLON' in ctype1.upper() and 'GLAT' in ctype2.upper():
+                        coord_frame = 'galactic'
+                    else:
+                        logging.error(f"Unsupported coordinate system in {fits_file}: {ctype1}, {ctype2}")
+                        coord_frame = 'unknown'
+
+                    # Add coordinate frame to metadata
+                    metadata['Coordinate_Frame'] = coord_frame
+                except Exception as e:
+                    logging.error(f"Failed to initialize WCS or extract ctype for {fits_file}: {e}")
+                    coord_frame = 'unknown'
+                    metadata['Coordinate_Frame'] = coord_frame
+
                 # Compute Polygon and MOC
                 try:
-                    # Initialize WCS object from header
-                    wcs = WCS(header)
                     naxis = header.get('NAXIS', None)
                     naxis1 = header.get('NAXIS1', None)
                     naxis2 = header.get('NAXIS2', None)
@@ -129,19 +150,6 @@ class FITSMetadataExtractor:
                             [naxis1 + 0.5, naxis2 + 0.5] + extra_axes,
                             [0.5, naxis2 + 0.5] + extra_axes
                         ])
-
-                        # Extract the coordinate types
-                        ctype1 = wcs.wcs.ctype[0]
-                        ctype2 = wcs.wcs.ctype[1]
-
-                        # Determine the coordinate frame
-                        if 'RA' in ctype1.upper() and 'DEC' in ctype2.upper():
-                            coord_frame = 'icrs'
-                        elif 'GLON' in ctype1.upper() and 'GLAT' in ctype2.upper():
-                            coord_frame = 'galactic'
-                        else:
-                            logging.error(f"Unsupported coordinate system in {fits_file}: {ctype1}, {ctype2}")
-                            coord_frame = 'unknown'
 
                         # Convert pixel coordinates to world coordinates
                         try:
@@ -189,7 +197,7 @@ class FITSMetadataExtractor:
                                             f"Max Order: {moc.max_order}"
                                         )
 
-                                        # Log success message in green with resolution method and MOC details
+                                        # Log success message
                                         success_message = (
                                             f"Successfully processed '{fits_file}'. "
                                             f"Resolved using {resolution_method}: '{resolved_name}'. "
@@ -206,7 +214,7 @@ class FITSMetadataExtractor:
                         else:
                             logging.error(f"Skipping polygon and MOC computation for {fits_file} due to WCS errors.")
 
-                        # **New Section: Extract RA and DEC via WCS**
+                        # Extract RA and DEC via WCS
                         try:
                             # Calculate the center pixel
                             center_pixel = [(naxis1 + 1) / 2, (naxis2 + 1) / 2] + extra_axes
@@ -233,3 +241,4 @@ class FITSMetadataExtractor:
             logging.error(f"Failed to extract metadata from {fits_file}: {e}", exc_info=True)
 
         return metadata
+
