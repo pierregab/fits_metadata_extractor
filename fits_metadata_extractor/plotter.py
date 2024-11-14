@@ -474,10 +474,8 @@ def plot_search_region_and_find_fits(
     from astropy.io import fits
     from astropy.wcs import WCS
     from astropy.utils.exceptions import AstropyWarning
-    from reproject import reproject_interp
     import warnings
-    from regions import PolygonSkyRegion
-    from shapely.geometry import Polygon as ShapelyPolygon
+    from astropy.visualization.wcsaxes import WCSAxes
 
     # Ensure necessary functions are imported
     if 'search_fits_by_point' not in globals() and 'search_fits_by_region' not in globals():
@@ -532,21 +530,33 @@ def plot_search_region_and_find_fits(
     logging.info(f"Generating plots for {total_plots} matching FITS files.")
 
     # Initialize a matplotlib figure with WCS projection (Mollweide)
-    # Define a WCS for the Mollweide projection
+    # Create a WCS for the Mollweide projection
     main_wcs = WCS(naxis=2)
-    # Set the CTYPEs for Mollweide projection
-    main_wcs.wcs.ctype = ["RA---MOL", "DEC--MOL"]
-    # Set reference pixel and coordinate values
     main_wcs.wcs.crval = [0, 0]  # Reference coordinates (RA, Dec)
-    main_wcs.wcs.crpix = [0, 0]  # Reference pixel
-    # Set pixel scale (degrees per pixel)
-    main_wcs.wcs.cdelt = np.array([-360.0 / 3600, 180.0 / 3600])  # degrees per pixel
+    main_wcs.wcs.crpix = [180, 90]  # Reference pixel (center of the plot)
+    main_wcs.wcs.ctype = ["RA---MOL", "DEC--MOL"]
+    main_wcs.wcs.cdelt = [-1, 1]  # Degrees per pixel
     main_wcs.wcs.cunit = ["deg", "deg"]
 
     fig = plt.figure(figsize=(12, 6))
     ax = fig.add_subplot(111, projection=main_wcs)
+
     ax.grid(True, color='lightgray')
-    ax.set_title(plot_title, pad=20)
+    ax.set_title(plot_title + ' (Mollweide Projection)', pad=20)
+
+    # Set axis labels
+    ax.set_xlabel('Right Ascension (degrees)')
+    ax.set_ylabel('Declination (degrees)')
+
+    # Set coordinate grid labels and formats
+    lon = ax.coords[0]
+    lat = ax.coords[1]
+    lon.set_major_formatter('hh:mm')
+    lat.set_major_formatter('dd')
+    lon.set_ticks(spacing=15 * u.deg)
+    lat.set_ticks(spacing=15 * u.deg)
+    lon.display_minor_ticks(True)
+    lat.display_minor_ticks(True)
 
     # Plot the search region if required
     if plot_search_region:
@@ -557,9 +567,9 @@ def plot_search_region_and_find_fits(
                 sky_coord = SkyCoord(ra=ra * u.deg, dec=dec * u.deg, frame='icrs')
             elif coordinate_frame == 'galactic':
                 sky_coord = SkyCoord(l=ra * u.deg, b=dec * u.deg, frame='galactic').icrs
-            ra_rad = sky_coord.ra.wrap_at(180 * u.deg).radian
-            dec_rad = sky_coord.dec.radian
-            ax.plot(ra_rad, dec_rad, marker='*', color='yellow', markersize=15, label='Search Point')
+            ra_deg = sky_coord.ra.wrap_at(180 * u.deg).deg
+            dec_deg = sky_coord.dec.deg
+            ax.plot(ra_deg, dec_deg, marker='*', color='yellow', markersize=15, label='Search Point', transform=ax.get_transform('world'))
         elif region['type'] == 'circle':
             center_ra, center_dec = region['center']
             radius = region['radius']
@@ -569,9 +579,9 @@ def plot_search_region_and_find_fits(
             ra_circle = center.ra.deg + (radius * np.cos(angles)) / np.cos(center.dec.radian)
             dec_circle = center.dec.deg + radius * np.sin(angles)
             sky_circle = SkyCoord(ra=ra_circle * u.deg, dec=dec_circle * u.deg, frame='icrs')
-            ra_rad = sky_circle.ra.wrap_at(180 * u.deg).radian
-            dec_rad = sky_circle.dec.radian
-            ax.plot(ra_rad, dec_rad, color='yellow', linestyle='--', linewidth=2, label='Search Circle')
+            ra_deg = sky_circle.ra.wrap_at(180 * u.deg).deg
+            dec_deg = sky_circle.dec.deg
+            ax.plot(ra_deg, dec_deg, color='yellow', linestyle='--', linewidth=2, label='Search Circle', transform=ax.get_transform('world'))
         elif region['type'] == 'polygon':
             polygon_coords = region['coordinates']
             sky_polygon = SkyCoord(
@@ -579,9 +589,9 @@ def plot_search_region_and_find_fits(
                 dec=[c[1] for c in polygon_coords] * u.deg,
                 frame='icrs'
             )
-            ra_rad = sky_polygon.ra.wrap_at(180 * u.deg).radian
-            dec_rad = sky_polygon.dec.radian
-            ax.plot(ra_rad, dec_rad, color='yellow', linestyle='-', linewidth=2, label='Search Polygon')
+            ra_deg = sky_polygon.ra.wrap_at(180 * u.deg).deg
+            dec_deg = sky_polygon.dec.deg
+            ax.plot(ra_deg, dec_deg, color='yellow', linestyle='-', linewidth=2, label='Search Polygon', transform=ax.get_transform('world'))
 
     # Iterate over matching FITS files and plot their MOCs and polygons
     for idx, row in tqdm(
@@ -605,7 +615,6 @@ def plot_search_region_and_find_fits(
         try:
             # Suppress warnings for FITS header parsing
             with warnings.catch_warnings():
-                warnings.simplefilter('ignore', FITSFixedWarning)
                 warnings.simplefilter('ignore', AstropyWarning)
                 
                 # Determine the coordinate frame based on the FITS file's header
@@ -682,18 +691,19 @@ def plot_search_region_and_find_fits(
                         logging.error("Unknown coordinate frame. Cannot create SkyCoord object.")
                         continue
 
-                    # Convert to radians for plotting
-                    ra_rad = sky_coords.ra.wrap_at(180 * u.deg).radian
-                    dec_rad = sky_coords.dec.radian
+                    # Convert to degrees for plotting
+                    ra_deg = sky_coords.ra.wrap_at(180 * u.deg).deg
+                    dec_deg = sky_coords.dec.deg
 
                     # Use unique label only once
                     label_polygon = 'FITS Polygon' if idx == matching_df.index[0] else ""
                     ax.plot(
-                        ra_rad,
-                        dec_rad,
+                        ra_deg,
+                        dec_deg,
                         color='green',
                         linewidth=1,
-                        label=label_polygon
+                        label=label_polygon,
+                        transform=ax.get_transform('world')
                     )
 
                 except json.JSONDecodeError as e:
