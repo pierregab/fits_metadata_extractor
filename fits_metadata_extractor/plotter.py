@@ -415,6 +415,7 @@ def plot_search_region_and_find_fits(
 ):
     """
     Plots the search region and overlays the coverage of matching FITS files using WCS transformations.
+    Each FITS file's name is labeled alongside its polygon on the plot.
 
     Parameters:
         metadata_df (pandas.DataFrame):
@@ -601,9 +602,8 @@ def plot_search_region_and_find_fits(
     ):
         fits_file = row.get('FITS_File', None)
         polygon_coords_str = row.get('Polygon_Coords', None)
-        moc_str = row.get('MOC', None)
 
-        if pd.isnull(fits_file) or pd.isnull(polygon_coords_str) or pd.isnull(moc_str):
+        if pd.isnull(fits_file) or pd.isnull(polygon_coords_str):
             logging.warning(f"Missing data for FITS file in row {idx}. Skipping.")
             continue
 
@@ -631,23 +631,6 @@ def plot_search_region_and_find_fits(
                     else:
                         logging.error(f"Unsupported coordinate system in {fits_file}: {ctype1}, {ctype2}")
                         continue  # Skip this FITS file
-
-                # Deserialize the MOC string
-                moc = MOC.from_string(moc_str)
-
-                # If the MOC is in a different coordinate frame, transform it to ICRS
-                if coord_frame == 'galactic':
-                    moc = moc.to_icrs()
-
-                # Plot the MOC using the main WCS
-                try:
-                    # Use unique label only once
-                    label_moc = 'FITS MOC' if idx == matching_df.index[0] else ""
-                    moc.fill(ax=ax, wcs=main_wcs, alpha=0.3, label=label_moc, color='blue')
-                    moc.border(ax=ax, wcs=main_wcs, color='blue', linewidth=1.0)
-                except Exception as e:
-                    logging.error(f"Failed to plot MOC for '{fits_file}': {e}")
-                    continue
 
                 # Deserialize and plot the polygon
                 try:
@@ -695,15 +678,41 @@ def plot_search_region_and_find_fits(
                     ra_deg = sky_coords.ra.wrap_at(180 * u.deg).deg
                     dec_deg = sky_coords.dec.deg
 
-                    # Use unique label only once
-                    label_polygon = 'FITS Polygon' if idx == matching_df.index[0] else ""
+                    # Plot the polygon
                     ax.plot(
                         ra_deg,
                         dec_deg,
                         color='green',
                         linewidth=1,
-                        label=label_polygon,
+                        label='FITS Polygon' if idx == matching_df.index[0] else "",
                         transform=ax.get_transform('world')
+                    )
+
+                    # Calculate centroid for labeling
+                    # Using spherical mean to account for celestial coordinates
+                    centroid = SkyCoord(
+                        ra=np.mean(sky_coords.ra.wrap_at(180 * u.deg).deg) * u.deg,
+                        dec=np.mean(sky_coords.dec.deg) * u.deg,
+                        frame='icrs'
+                    )
+                    ra_centroid = centroid.ra.wrap_at(180 * u.deg).deg
+                    dec_centroid = centroid.dec.deg
+
+                    # Ensure fits_file name not to be too long
+                    if len(fits_file) > 10:
+                        fits_file = fits_file[:20] + '...'
+
+                    # Add FITS file name as a label near the centroid
+                    ax.text(
+                        ra_centroid,
+                        dec_centroid,
+                        fits_file,
+                        transform=ax.get_transform('world'),
+                        fontsize=8,
+                        color='black',
+                        ha='center',
+                        va='center',
+                        bbox=dict(facecolor='white', alpha=0.6, edgecolor='none', pad=1)
                     )
 
                 except json.JSONDecodeError as e:
