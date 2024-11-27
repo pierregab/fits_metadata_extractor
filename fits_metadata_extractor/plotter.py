@@ -415,7 +415,7 @@ def plot_search_region_and_find_fits(
 ):
     """
     Plots the search region and overlays the coverage of matching FITS files using WCS transformations.
-    Each FITS file's name is labeled alongside its polygon on the plot.
+    Each FITS file is assigned a unique number, displayed on the plot, with a legend mapping numbers to FITS file names.
 
     Parameters:
         metadata_df (pandas.DataFrame):
@@ -477,6 +477,7 @@ def plot_search_region_and_find_fits(
     from astropy.utils.exceptions import AstropyWarning
     import warnings
     from astropy.visualization.wcsaxes import WCSAxes
+    from adjustText import adjust_text  # To adjust label positions
 
     # Ensure necessary functions are imported
     if 'search_fits_by_point' not in globals() and 'search_fits_by_region' not in globals():
@@ -530,6 +531,10 @@ def plot_search_region_and_find_fits(
     total_plots = len(matching_df) if max_plots is None else min(len(matching_df), max_plots)
     logging.info(f"Generating plots for {total_plots} matching FITS files.")
 
+    # Assign unique numbers to each FITS file
+    matching_df = matching_df.head(total_plots).reset_index(drop=True)
+    matching_df['Plot_Number'] = matching_df.index + 1  # Start numbering from 1
+
     # Initialize a matplotlib figure with WCS projection (Mollweide)
     # Create a WCS for the Mollweide projection
     main_wcs = WCS(naxis=2)
@@ -539,15 +544,15 @@ def plot_search_region_and_find_fits(
     main_wcs.wcs.cdelt = [-1, 1]  # Degrees per pixel
     main_wcs.wcs.cunit = ["deg", "deg"]
 
-    fig = plt.figure(figsize=(12, 6))
+    fig = plt.figure(figsize=(14, 7))
     ax = fig.add_subplot(111, projection=main_wcs)
 
     ax.grid(True, color='lightgray')
-    ax.set_title(plot_title + ' (Mollweide Projection)', pad=20)
+    ax.set_title(plot_title + ' (Mollweide Projection)', pad=20, fontsize=14)
 
     # Set axis labels
-    ax.set_xlabel('Right Ascension (degrees)')
-    ax.set_ylabel('Declination (degrees)')
+    ax.set_xlabel('Right Ascension (degrees)', fontsize=12)
+    ax.set_ylabel('Declination (degrees)', fontsize=12)
 
     # Set coordinate grid labels and formats
     lon = ax.coords[0]
@@ -594,14 +599,19 @@ def plot_search_region_and_find_fits(
             dec_deg = sky_polygon.dec.deg
             ax.plot(ra_deg, dec_deg, color='yellow', linestyle='-', linewidth=2, label='Search Polygon', transform=ax.get_transform('world'))
 
+    # Prepare to collect legend entries
+    legend_entries = {}
+    texts = []
+
     # Iterate over matching FITS files and plot their MOCs and polygons
     for idx, row in tqdm(
-        matching_df.head(total_plots).iterrows(), 
+        matching_df.iterrows(), 
         total=total_plots, 
         desc="Plotting FITS Coverages"
     ):
         fits_file = row.get('FITS_File', None)
         polygon_coords_str = row.get('Polygon_Coords', None)
+        plot_number = row.get('Plot_Number')
 
         if pd.isnull(fits_file) or pd.isnull(polygon_coords_str):
             logging.warning(f"Missing data for FITS file in row {idx}. Skipping.")
@@ -678,13 +688,20 @@ def plot_search_region_and_find_fits(
                     ra_deg = sky_coords.ra.wrap_at(180 * u.deg).deg
                     dec_deg = sky_coords.dec.deg
 
-                    # Plot the polygon
+                    # Calculate area to handle small coverages (optional)
+                    # Here, we set a threshold (e.g., minimum number of vertices)
+                    if len(ra_deg) < 4:
+                        # Skip plotting very small or degenerate polygons
+                        logging.warning(f"Polygon for '{fits_file}' is too small. Skipping plot.")
+                        continue
+
+                    # Plot the polygon with adjusted transparency and line width
                     ax.plot(
                         ra_deg,
                         dec_deg,
-                        color='green',
+                        color='blue',
                         linewidth=1,
-                        label='FITS Polygon' if idx == matching_df.index[0] else "",
+                        alpha=0.5,  # Semi-transparent to handle overlaps
                         transform=ax.get_transform('world')
                     )
 
@@ -698,22 +715,22 @@ def plot_search_region_and_find_fits(
                     ra_centroid = centroid.ra.wrap_at(180 * u.deg).deg
                     dec_centroid = centroid.dec.deg
 
-                    # Ensure fits_file name not to be too long
-                    if len(fits_file) > 10:
-                        fits_file = fits_file[:20] + '...'
-
-                    # Add FITS file name as a label near the centroid
-                    ax.text(
+                    # Plot the number label at the centroid
+                    text = ax.text(
                         ra_centroid,
                         dec_centroid,
-                        fits_file,
+                        str(plot_number),
                         transform=ax.get_transform('world'),
-                        fontsize=8,
-                        color='black',
+                        fontsize=9,
+                        color='red',
                         ha='center',
                         va='center',
                         bbox=dict(facecolor='white', alpha=0.6, edgecolor='none', pad=1)
                     )
+                    texts.append(text)
+
+                    # Add to legend entries
+                    legend_entries[str(plot_number)] = fits_file
 
                 except json.JSONDecodeError as e:
                     logging.error(f"Failed to decode Polygon_Coords for '{fits_file}': {e}")
@@ -726,12 +743,40 @@ def plot_search_region_and_find_fits(
             logging.error(f"Failed to process FITS file '{fits_file}': {e}")
             continue
 
-    # Finalize the plot
-    # To avoid duplicate labels in the legend
-    handles, labels = ax.get_legend_handles_labels()
-    unique = dict(zip(labels, handles))
-    ax.legend(unique.values(), unique.keys(), loc='upper right', fontsize='small')
+    # Adjust text to minimize overlaps
+    adjust_text(texts, ax=ax, arrowprops=dict(arrowstyle='-', color='gray', lw=0.5))
 
+    # Create legend entries with numbers and FITS file names without coverage lines
+    # Create legend handles as colored markers without lines
+    legend_handles = [
+        plt.Line2D([], [], marker='o', color='blue', linestyle='None', markersize=6, label=f'{num}: {fname}')
+        for num, fname in legend_entries.items()
+    ]
+
+    # Add search region to the legend
+    if plot_search_region:
+        if region['type'] == 'point':
+            search_handle = plt.Line2D([], [], marker='*', color='yellow', markersize=15, linestyle='None', label='Search Point')
+        elif region['type'] == 'circle':
+            search_handle = plt.Line2D([], [], color='yellow', linestyle='--', linewidth=2, label='Search Circle')
+        elif region['type'] == 'polygon':
+            search_handle = plt.Line2D([], [], color='yellow', linestyle='-', linewidth=2, label='Search Polygon')
+        else:
+            search_handle = None
+
+        if search_handle:
+            legend_handles.append(search_handle)
+
+    # Place the legend at the lower right without coverage lines
+    ax.legend(
+        handles=legend_handles,
+        loc='lower right',
+        fontsize='small',
+        framealpha=0.7,
+        title='FITS Files'
+    )
+
+    # Finalize the plot
     output_file = os.path.join(output_dir, "search_region_and_fits.png")
     plt.savefig(output_file, dpi=300, bbox_inches='tight')
     logging.info(f"Search region and matching FITS coverages plotted and saved to '{output_file}'")
