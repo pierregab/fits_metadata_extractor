@@ -13,9 +13,11 @@ class FITSProcessor:
     Class for processing directories of FITS files and extracting metadata.
     """
 
-    def __init__(self, max_workers=10):
+    def __init__(self, max_workers=10, extensions=None):
         self.max_workers = max_workers
         self.extractor = FITSMetadataExtractor()
+        # Default extensions if none provided
+        self.extensions = extensions if extensions else ['.fits', '.fit']
 
     def process_fits_file(self, fits_file):
         """
@@ -41,12 +43,15 @@ class FITSProcessor:
         Returns:
             pandas.DataFrame: DataFrame containing metadata for all FITS files.
         """
-        fits_pattern = os.path.join(directory_path, '*.fits')
-        fits_files = glob.glob(fits_pattern)
+        fits_files = []
+        for ext in self.extensions:
+            pattern = os.path.join(directory_path, f'*{ext}')
+            fits_files.extend(glob.glob(pattern))
+        
         metadata_list = []
 
         if not fits_files:
-            logging.warning(f"No FITS files found in directory: {directory_path}")
+            logging.warning(f"No FITS files with extensions {self.extensions} found in directory: {directory_path}")
 
         with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
             future_to_fits = {executor.submit(self.process_fits_file, fits_file): fits_file for fits_file in fits_files}
