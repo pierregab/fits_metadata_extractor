@@ -402,9 +402,6 @@ def plot_moc_and_polygon_from_dataset_notebook(
             logging.error(f"Failed to plot '{fits_file}': {e}")
             continue
 
-def test():
-    return "Test successful."
-
 def plot_search_region_and_find_fits(
     metadata_df, 
     region, 
@@ -468,7 +465,6 @@ def plot_search_region_and_find_fits(
     from astropy.coordinates import SkyCoord
     import astropy.units as u
     from tqdm.notebook import tqdm
-    from mocpy import MOC
     import numpy as np
     import json
     import pandas as pd
@@ -476,16 +472,22 @@ def plot_search_region_and_find_fits(
     from astropy.wcs import WCS
     from astropy.utils.exceptions import AstropyWarning
     import warnings
-    from astropy.visualization.wcsaxes import WCSAxes
     from adjustText import adjust_text  # To adjust label positions
 
     # Ensure necessary functions are imported
     if 'search_fits_by_point' not in globals() and 'search_fits_by_region' not in globals():
         raise ImportError("Search functions from 'search.py' must be imported before using this plotting function.")
 
+    # Configure logging
+    logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+
     # Create the output directory if it doesn't exist
     os.makedirs(output_dir, exist_ok=True)
     logging.info(f"Plots will be saved to: {output_dir}")
+
+    # Initialize variables for central coordinates
+    center_ra = 0.0
+    center_dec = 0.0
 
     # Determine the type of search and find matching FITS files
     if region['type'] == 'point':
@@ -493,10 +495,12 @@ def plot_search_region_and_find_fits(
         coordinate_frame = region.get('coordinate_frame', 'icrs').lower()
         if coordinate_frame == 'icrs':
             matching_df = search_fits_by_point(metadata_df, ra, dec)
+            center_coord = SkyCoord(ra=ra * u.deg, dec=dec * u.deg, frame='icrs')
         elif coordinate_frame == 'galactic':
             # Convert point to ICRS for searching
             sky_coord = SkyCoord(l=ra * u.deg, b=dec * u.deg, frame='galactic').icrs
             matching_df = search_fits_by_point(metadata_df, sky_coord.ra.deg, sky_coord.dec.deg)
+            center_coord = sky_coord
         else:
             logging.error(f"Unsupported coordinate frame: {coordinate_frame}")
             return
@@ -511,6 +515,7 @@ def plot_search_region_and_find_fits(
         }
         matching_df = search_fits_by_region(metadata_df, search_region)
         plot_title = f"Search Region: Circle (RA={center_ra}, Dec={center_dec}, Radius={radius}°)"
+        center_coord = SkyCoord(ra=center_ra * u.deg, dec=center_dec * u.deg, frame='icrs')
     elif region['type'] == 'polygon':
         coordinates = region['coordinates']
         search_region = {
@@ -519,6 +524,16 @@ def plot_search_region_and_find_fits(
         }
         matching_df = search_fits_by_region(metadata_df, search_region)
         plot_title = f"Search Region: Polygon ({len(coordinates)} vertices)"
+        # Calculate centroid of the polygon
+        sky_polygon = SkyCoord(
+            ra=[c[0] for c in coordinates] * u.deg,
+            dec=[c[1] for c in coordinates] * u.deg,
+            frame='icrs'
+        )
+        # Compute mean RA and Dec manually
+        mean_ra = sky_polygon.ra.mean()
+        mean_dec = sky_polygon.dec.mean()
+        center_coord = SkyCoord(ra=mean_ra, dec=mean_dec, frame='icrs')
     else:
         logging.error(f"Unsupported region type: {region['type']}")
         return
@@ -526,6 +541,10 @@ def plot_search_region_and_find_fits(
     if matching_df.empty:
         logging.warning("No FITS files matched the search criteria.")
         return
+
+    # Set central RA and Dec based on the search region
+    center_ra = center_coord.ra.wrap_at(180 * u.deg).deg
+    center_dec = center_coord.dec.deg
 
     # Limit the number of plots if max_plots is set
     total_plots = len(matching_df) if max_plots is None else min(len(matching_df), max_plots)
@@ -536,15 +555,15 @@ def plot_search_region_and_find_fits(
     matching_df['Plot_Number'] = matching_df.index + 1  # Start numbering from 1
 
     # Initialize a matplotlib figure with WCS projection (Mollweide)
-    # Create a WCS for the Mollweide projection
+    # Create a WCS for the Mollweide projection centered on the search region
     main_wcs = WCS(naxis=2)
-    main_wcs.wcs.crval = [0, 0]  # Reference coordinates (RA, Dec)
+    main_wcs.wcs.crval = [center_ra, center_dec]  # Reference coordinates (RA, Dec)
     main_wcs.wcs.crpix = [180, 90]  # Reference pixel (center of the plot)
     main_wcs.wcs.ctype = ["RA---MOL", "DEC--MOL"]
     main_wcs.wcs.cdelt = [-1, 1]  # Degrees per pixel
     main_wcs.wcs.cunit = ["deg", "deg"]
 
-    fig = plt.figure(figsize=(14, 7))
+    fig = plt.figure(figsize=(16, 8))  # Increased width to accommodate legend
     ax = fig.add_subplot(111, projection=main_wcs)
 
     ax.grid(True, color='lightgray')
@@ -564,46 +583,87 @@ def plot_search_region_and_find_fits(
     lon.display_minor_ticks(True)
     lat.display_minor_ticks(True)
 
+    # Rotate RA labels and adjust their padding to prevent overlap
+    lon.set_ticklabel(rotation=45)
+    lon.ticklabels.set_pad(24)  # Increased padding to move labels further down
+
     # Plot the search region if required
     if plot_search_region:
-        if region['type'] == 'point':
-            ra, dec = region['coordinates']
-            coordinate_frame = region.get('coordinate_frame', 'icrs').lower()
-            if coordinate_frame == 'icrs':
-                sky_coord = SkyCoord(ra=ra * u.deg, dec=dec * u.deg, frame='icrs')
-            elif coordinate_frame == 'galactic':
-                sky_coord = SkyCoord(l=ra * u.deg, b=dec * u.deg, frame='galactic').icrs
-            ra_deg = sky_coord.ra.wrap_at(180 * u.deg).deg
-            dec_deg = sky_coord.dec.deg
-            ax.plot(ra_deg, dec_deg, marker='*', color='yellow', markersize=15, label='Search Point', transform=ax.get_transform('world'))
-        elif region['type'] == 'circle':
-            center_ra, center_dec = region['center']
-            radius = region['radius']
-            center = SkyCoord(ra=center_ra * u.deg, dec=center_dec * u.deg, frame='icrs')
-            # Create circle coordinates
-            angles = np.linspace(0, 2 * np.pi, 100)
-            ra_circle = center.ra.deg + (radius * np.cos(angles)) / np.cos(center.dec.radian)
-            dec_circle = center.dec.deg + radius * np.sin(angles)
-            sky_circle = SkyCoord(ra=ra_circle * u.deg, dec=dec_circle * u.deg, frame='icrs')
-            ra_deg = sky_circle.ra.wrap_at(180 * u.deg).deg
-            dec_deg = sky_circle.dec.deg
-            ax.plot(ra_deg, dec_deg, color='yellow', linestyle='--', linewidth=2, label='Search Circle', transform=ax.get_transform('world'))
-        elif region['type'] == 'polygon':
-            polygon_coords = region['coordinates']
-            sky_polygon = SkyCoord(
-                ra=[c[0] for c in polygon_coords] * u.deg,
-                dec=[c[1] for c in polygon_coords] * u.deg,
-                frame='icrs'
-            )
-            ra_deg = sky_polygon.ra.wrap_at(180 * u.deg).deg
-            dec_deg = sky_polygon.dec.deg
-            ax.plot(ra_deg, dec_deg, color='yellow', linestyle='-', linewidth=2, label='Search Polygon', transform=ax.get_transform('world'))
+        try:
+            if region['type'] == 'point':
+                ra, dec = region['coordinates']
+                coordinate_frame = region.get('coordinate_frame', 'icrs').lower()
+                if coordinate_frame == 'icrs':
+                    sky_coord = SkyCoord(ra=ra * u.deg, dec=dec * u.deg, frame='icrs')
+                elif coordinate_frame == 'galactic':
+                    sky_coord = SkyCoord(l=ra * u.deg, b=dec * u.deg, frame='galactic').icrs
+                ra_deg = sky_coord.ra.wrap_at(180 * u.deg).deg
+                dec_deg = sky_coord.dec.deg
+                ax.plot(ra_deg, dec_deg, marker='*', color='yellow', markersize=15, label='Search Point', transform=ax.get_transform('world'))
+            elif region['type'] == 'circle':
+                center_ra, center_dec = region['center']
+                radius = region['radius']
+                center = SkyCoord(ra=center_ra * u.deg, dec=center_dec * u.deg, frame='icrs')
+                # Create circle coordinates
+                angles = np.linspace(0, 2 * np.pi, 100)
+                ra_circle = center.ra.deg + (radius * np.cos(angles)) / np.cos(center.dec.radian)
+                dec_circle = center.dec.deg + radius * np.sin(angles)
+                sky_circle = SkyCoord(ra=ra_circle * u.deg, dec=dec_circle * u.deg, frame='icrs')
+                ra_deg = sky_circle.ra.wrap_at(180 * u.deg).deg
+                dec_deg = sky_circle.dec.deg
+
+                # Plot the boundary of the circle
+                ax.plot(ra_deg, dec_deg, color='yellow', linestyle='--', linewidth=2, label='Search Circle', transform=ax.get_transform('world'))
+
+                # Fill the circle with color and low alpha
+                ax.fill(
+                    ra_deg, 
+                    dec_deg, 
+                    color='yellow', 
+                    alpha=0.2,  # Low transparency
+                    transform=ax.get_transform('world'),
+                    label='_nolegend_'  # Prevent duplicate labels in legend
+                )
+
+            elif region['type'] == 'polygon':
+                polygon_coords = region['coordinates']
+                sky_polygon = SkyCoord(
+                    ra=[c[0] for c in polygon_coords] * u.deg,
+                    dec=[c[1] for c in polygon_coords] * u.deg,
+                    frame='icrs'
+                )
+                ra_deg = sky_polygon.ra.wrap_at(180 * u.deg).deg
+                dec_deg = sky_polygon.dec.deg
+
+                # Close the polygon if not already closed
+                tolerance = 1e-6  # degrees
+                if not (np.isclose(ra_deg[0], ra_deg[-1], atol=tolerance) and 
+                        np.isclose(dec_deg[0], dec_deg[-1], atol=tolerance)):
+                    ra_deg = np.append(ra_deg, ra_deg[0])
+                    dec_deg = np.append(dec_deg, dec_deg[0])
+                    logging.info("Closed the search polygon by appending the first point.")
+
+                # Plot the boundary of the polygon
+                ax.plot(ra_deg, dec_deg, color='yellow', linestyle='-', linewidth=2, label='Search Polygon', transform=ax.get_transform('world'))
+
+                # Fill the polygon with color and low alpha
+                ax.fill(
+                    ra_deg, 
+                    dec_deg, 
+                    color='yellow', 
+                    alpha=0.2,  # Low transparency
+                    transform=ax.get_transform('world'),
+                    label='_nolegend_'  # Prevent duplicate labels in legend
+                )
+
+        except Exception as e:
+            logging.error(f"Failed to plot search region: {e}")
 
     # Prepare to collect legend entries
     legend_entries = {}
     texts = []
 
-    # Iterate over matching FITS files and plot their MOCs and polygons
+    # Iterate over matching FITS files and plot their polygons
     for idx, row in tqdm(
         matching_df.iterrows(), 
         total=total_plots, 
@@ -642,109 +702,114 @@ def plot_search_region_and_find_fits(
                         logging.error(f"Unsupported coordinate system in {fits_file}: {ctype1}, {ctype2}")
                         continue  # Skip this FITS file
 
-                # Deserialize and plot the polygon
-                try:
-                    polygon_coords = json.loads(polygon_coords_str)
-                    if isinstance(polygon_coords, list):
-                        if all(isinstance(item, (int, float)) for item in polygon_coords):
-                            # Flat list detected, reshape into list of pairs
-                            if len(polygon_coords) % 2 != 0:
-                                logging.error(f"Polygon_Coords list length is not even: {polygon_coords}")
-                                continue
-                            else:
-                                polygon_coords = [polygon_coords[i:i+2] for i in range(0, len(polygon_coords), 2)]
-                        elif not all(isinstance(item, (list, tuple)) and len(item) == 2 for item in polygon_coords):
-                            logging.error(f"Invalid Polygon_Coords format: {polygon_coords}")
+            # Deserialize and plot the polygon
+            try:
+                polygon_coords = json.loads(polygon_coords_str)
+                if isinstance(polygon_coords, list):
+                    if all(isinstance(item, (int, float)) for item in polygon_coords):
+                        # Flat list detected, reshape into list of pairs
+                        if len(polygon_coords) % 2 != 0:
+                            logging.error(f"Polygon_Coords list length is not even for '{fits_file}': {polygon_coords}")
                             continue
-                    else:
-                        logging.error(f"Polygon_Coords is not a list or JSON string: {polygon_coords}")
+                        else:
+                            polygon_coords = [polygon_coords[i:i+2] for i in range(0, len(polygon_coords), 2)]
+                    elif not all(isinstance(item, (list, tuple)) and len(item) == 2 for item in polygon_coords):
+                        logging.error(f"Invalid Polygon_Coords format for '{fits_file}': {polygon_coords}")
                         continue
-
-                    # Extract RA/GLON and Dec/GLAT from polygon coordinates
-                    x_coord, y_coord = zip(*polygon_coords)
-                    x_coord = np.array(x_coord, dtype=np.float64)
-                    y_coord = np.array(y_coord, dtype=np.float64)
-
-                    # Check for NaN or infinite values
-                    if not (np.isfinite(x_coord).all() and np.isfinite(y_coord).all()):
-                        logging.error("RA/GLON or Dec/GLAT contains non-finite values.")
-                        continue
-
-                    # Close the polygon by adding the first point at the end if not already closed
-                    if (x_coord[0], y_coord[0]) != (x_coord[-1], y_coord[-1]):
-                        x_coord = np.append(x_coord, x_coord[0])
-                        y_coord = np.append(y_coord, y_coord[0])
-
-                    # Create SkyCoord object for the polygon
-                    if coord_frame == 'icrs':
-                        sky_coords = SkyCoord(ra=x_coord * u.deg, dec=y_coord * u.deg, frame='icrs')
-                    elif coord_frame == 'galactic':
-                        sky_coords = SkyCoord(l=x_coord * u.deg, b=y_coord * u.deg, frame='galactic').icrs
-                    else:
-                        logging.error("Unknown coordinate frame. Cannot create SkyCoord object.")
-                        continue
-
-                    # Convert to degrees for plotting
-                    ra_deg = sky_coords.ra.wrap_at(180 * u.deg).deg
-                    dec_deg = sky_coords.dec.deg
-
-                    # Calculate area to handle small coverages (optional)
-                    # Here, we set a threshold (e.g., minimum number of vertices)
-                    if len(ra_deg) < 4:
-                        # Skip plotting very small or degenerate polygons
-                        logging.warning(f"Polygon for '{fits_file}' is too small. Skipping plot.")
-                        continue
-
-                    # Plot the polygon with adjusted transparency and line width
-                    ax.plot(
-                        ra_deg,
-                        dec_deg,
-                        color='blue',
-                        linewidth=1,
-                        alpha=0.5,  # Semi-transparent to handle overlaps
-                        transform=ax.get_transform('world')
-                    )
-
-                    # Calculate centroid for labeling
-                    # Using spherical mean to account for celestial coordinates
-                    centroid = SkyCoord(
-                        ra=np.mean(sky_coords.ra.wrap_at(180 * u.deg).deg) * u.deg,
-                        dec=np.mean(sky_coords.dec.deg) * u.deg,
-                        frame='icrs'
-                    )
-                    ra_centroid = centroid.ra.wrap_at(180 * u.deg).deg
-                    dec_centroid = centroid.dec.deg
-
-                    # Plot the number label at the centroid
-                    text = ax.text(
-                        ra_centroid,
-                        dec_centroid,
-                        str(plot_number),
-                        transform=ax.get_transform('world'),
-                        fontsize=9,
-                        color='red',
-                        ha='center',
-                        va='center',
-                        bbox=dict(facecolor='white', alpha=0.6, edgecolor='none', pad=1)
-                    )
-                    texts.append(text)
-
-                    # Add to legend entries
-                    legend_entries[str(plot_number)] = fits_file
-
-                except json.JSONDecodeError as e:
-                    logging.error(f"Failed to decode Polygon_Coords for '{fits_file}': {e}")
+                else:
+                    logging.error(f"Polygon_Coords is not a list or JSON string for '{fits_file}': {polygon_coords}")
                     continue
-                except Exception as e:
-                    logging.error(f"Failed to plot polygon for '{fits_file}': {e}")
+
+                # Extract RA/GLON and Dec/GLAT from polygon coordinates
+                x_coord, y_coord = zip(*polygon_coords)
+                x_coord = np.array(x_coord, dtype=np.float64)
+                y_coord = np.array(y_coord, dtype=np.float64)
+
+                # Check for NaN or infinite values
+                if not (np.isfinite(x_coord).all() and np.isfinite(y_coord).all()):
+                    logging.error(f"RA/GLON or Dec/GLAT contains non-finite values for '{fits_file}'.")
                     continue
+
+                # Close the polygon by adding the first point at the end if not already closed (with tolerance)
+                tolerance = 1e-6  # degrees
+                if not (np.isclose(x_coord[0], x_coord[-1], atol=tolerance) and 
+                        np.isclose(y_coord[0], y_coord[-1], atol=tolerance)):
+                    x_coord = np.append(x_coord, x_coord[0])
+                    y_coord = np.append(y_coord, y_coord[0])
+                    logging.info(f"Closed polygon for '{fits_file}' by appending the first point.")
+
+                # Create SkyCoord object for the polygon
+                if coord_frame == 'icrs':
+                    sky_coords = SkyCoord(ra=x_coord * u.deg, dec=y_coord * u.deg, frame='icrs')
+                elif coord_frame == 'galactic':
+                    sky_coords = SkyCoord(l=x_coord * u.deg, b=y_coord * u.deg, frame='galactic').icrs
+                else:
+                    logging.error(f"Unknown coordinate frame for '{fits_file}'. Cannot create SkyCoord object.")
+                    continue
+
+                # Convert to degrees for plotting
+                ra_deg = sky_coords.ra.wrap_at(180 * u.deg).deg
+                dec_deg = sky_coords.dec.deg
+
+                # Validate that ra_deg and dec_deg have sufficient points
+                if len(ra_deg) < 4:  # At least 3 unique points + closing point
+                    logging.error(f"Polygon for '{fits_file}' has insufficient points after processing. Skipping.")
+                    continue
+
+                # Plot the polygon boundary with adjusted transparency and line width
+                ax.plot(
+                    ra_deg,
+                    dec_deg,
+                    color='blue',
+                    linewidth=1,
+                    alpha=0.5,  # Semi-transparent to handle overlaps
+                    transform=ax.get_transform('world')
+                )
+
+                # Calculate centroid for labeling
+                centroid_ra = np.mean(ra_deg)
+                centroid_dec = np.mean(dec_deg)
+                centroid = SkyCoord(ra=centroid_ra * u.deg, dec=centroid_dec * u.deg, frame='icrs')
+
+                ra_centroid = centroid.ra.wrap_at(180 * u.deg).deg
+                dec_centroid = centroid.dec.deg
+
+                # Plot the number label at the centroid
+                text = ax.text(
+                    ra_centroid,
+                    dec_centroid,
+                    str(plot_number),
+                    transform=ax.get_transform('world'),
+                    fontsize=9,
+                    color='red',
+                    ha='center',
+                    va='center',
+                    bbox=dict(facecolor='white', alpha=0.6, edgecolor='none', pad=1)
+                )
+                texts.append(text)
+
+                # Add to legend entries
+                legend_entries[str(plot_number)] = fits_file
+
+            except json.JSONDecodeError as e:
+                logging.error(f"Failed to decode Polygon_Coords for '{fits_file}': {e}")
+                continue
+            except Exception as e:
+                logging.error(f"Failed to plot polygon for '{fits_file}': {e}")
+                continue
 
         except Exception as e:
             logging.error(f"Failed to process FITS file '{fits_file}': {e}")
             continue
 
     # Adjust text to minimize overlaps
-    adjust_text(texts, ax=ax, arrowprops=dict(arrowstyle='-', color='gray', lw=0.5))
+    try:
+        if texts:
+            adjust_text(texts, ax=ax, arrowprops=dict(arrowstyle='-', color='gray', lw=0.5))
+        else:
+            logging.warning("No labels to adjust.")
+    except Exception as e:
+        logging.warning(f"adjust_text encountered an error: {e}")
 
     # Create legend entries with numbers and FITS file names without coverage lines
     # Create legend handles as colored markers without lines
@@ -767,17 +832,25 @@ def plot_search_region_and_find_fits(
         if search_handle:
             legend_handles.append(search_handle)
 
-    # Place the legend at the lower right without coverage lines
+    # Place the legend outside the main plot
     ax.legend(
         handles=legend_handles,
-        loc='lower right',
+        loc='center left',
+        bbox_to_anchor=(1.02, 0.8),  # Slightly further to the right
         fontsize='small',
         framealpha=0.7,
         title='FITS Files'
     )
 
+    # Adjust layout to accommodate the legend
+    plt.tight_layout()
+    plt.subplots_adjust(right=0.8)  # Further adjust the right margin if necessary
+
     # Finalize the plot
     output_file = os.path.join(output_dir, "search_region_and_fits.png")
-    plt.savefig(output_file, dpi=300, bbox_inches='tight')
-    logging.info(f"Search region and matching FITS coverages plotted and saved to '{output_file}'")
+    try:
+        plt.savefig(output_file, dpi=300, bbox_inches='tight')
+        logging.info(f"Search region and matching FITS coverages plotted and saved to '{output_file}'")
+    except Exception as e:
+        logging.error(f"Failed to save the plot: {e}")
     plt.show()
