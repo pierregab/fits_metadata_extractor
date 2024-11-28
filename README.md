@@ -1,650 +1,330 @@
+
 # FITS Metadata Extractor
 
-A Python tool for extracting and homogenizing metadata from FITS files, resolving astronomical object names, computing sky regions, and saving the metadata into a CSV file. It also provides functionalities to plot the MOCs (Multi-Order Coverage maps) and polygons of the FITS files and search FITS files by sky regions.
+*A Python package for processing, visualizing, and searching metadata from FITS files.*
 
-## Features
+---
 
-- **Metadata Extraction**: Extracts relevant metadata from FITS files, including WCS information, and homogenizes it for easy analysis.
-- **Object Name Resolution**: Resolves astronomical object names using multiple services (Simbad, NED, VizieR, and Sesame), with support for custom mappings.
-- **Sky Region Computation**: Computes sky regions (Polygon and MOC) from FITS files based on WCS information.
-- **Metadata Storage**: Saves extracted metadata into a CSV file for further processing or analysis.
-- **Plotting**: Provides functions to plot MOCs and Polygons of FITS files, with optional overlay of FITS data.
-- **Search Functionality**: Allows searching FITS files by sky coordinates or regions.
-
-## Installation
-
-### Prerequisites
-
-- **Python**: 3.6 or higher
-- **pip**: Package installer for Python
-
-### Install via GitHub
-
-Clone the repository:
-
-```bash
-git clone https://github.com/yourusername/fits_metadata_extractor.git
-cd fits_metadata_extractor
-```
-
-Install the required packages:
-
-```bash
-pip install -r requirements.txt
-```
-
-Alternatively, you can install the package using pip:
-
-```bash
-pip install git+https://github.com/yourusername/fits_metadata_extractor.git
-```
-
-### Dependencies
-
-The project depends on the following Python packages:
-
-- astropy
-- numpy
-- pandas
-- mocpy
-- shapely
-- regions
-- astroquery
-- matplotlib
-- filelock
-- reproject
-- tqdm
-
-These will be installed automatically when you install the package using the instructions above.
-
-## Usage
-
-### Command Line Interface
-
-Run the main script to extract metadata from FITS files:
-
-```bash
-python -m fits_metadata_extractor.main -i /path/to/fits/files -o metadata_dataset.csv
-```
-
-#### Options
-
-- `-i`, `--input_dir`: **(Required)** Path to the directory containing FITS files.
-- `-o`, `--output_csv`: **(Optional)** Path to the output CSV file. Default is `metadata_dataset.csv`.
-
-### Examples
-
-#### Extract Metadata from FITS Files
-
-Extract metadata from FITS files in a directory and save it to a CSV file:
-
-```bash
-python -m fits_metadata_extractor.main -i ./fits_files -o metadata.csv
-```
-
-#### Plotting MOC and Polygon
-
-You can use the `plotter.py` module to generate plots of MOC and Polygon regions.
-
-```python
-from fits_metadata_extractor.plotter import plot_moc_and_polygon
-
-# Example usage
-polygon_coords = '[[10.0, 20.0], [15.0, 25.0], [10.0, 30.0], [5.0, 25.0]]'
-moc_str = '1/0-4'
-
-plot_moc_and_polygon(polygon_coords, moc_str, title="Example Plot", fits_file='path/to/fits_file.fits')
-```
-
-#### Searching FITS Files by Sky Region
-
-Search for FITS files that cover a given sky coordinate or region.
-
-```python
-from fits_metadata_extractor.search import search_fits_by_point, search_fits_by_region
-from fits_metadata_extractor.utils import load_metadata_from_csv
-
-# Load metadata from CSV
-metadata_df = load_metadata_from_csv('metadata_dataset.csv')
-
-# Search by point
-ra = 150.0  # degrees
-dec = 2.0   # degrees
-matching_fits = search_fits_by_point(metadata_df, ra, dec)
-print(matching_fits)
-
-# Search by region (e.g., circle)
-region = {
-    'type': 'circle',
-    'center': (150.0, 2.0),
-    'radius': 1.0  # degrees
-}
-matching_fits = search_fits_by_region(metadata_df, region)
-print(matching_fits)
-```
-
-## Documentation
-
-Detailed documentation for the FITS Metadata Extractor can be found below.
-
-### Table of Contents
+## Table of Contents
 
 - [Introduction](#introduction)
-- [Modules](#modules)
-  - [custom_mapping.py](#custom_mappingpy)
-  - [logger.py](#loggerpy)
-  - [main.py](#mainpy)
-  - [metadata_extractor.py](#metadata_extractorpy)
-  - [plotter.py](#plotterpy)
-  - [polygon_utils.py](#polygon_utilspy)
-  - [processor.py](#processorpy)
-  - [resolver.py](#resolverpy)
-  - [search.py](#searchpy)
-  - [utils.py](#utilspy)
-- [Examples](#examples)
+- [Features](#features)
+- [Installation](#installation)
+    - [Prerequisites](#prerequisites)
+    - [Installing from Source](#installing-from-source)
+- [Usage](#usage)
+    - [Processing FITS Files](#processing-fits-files)
+    - [Saving and Loading Metadata](#saving-and-loading-metadata)
+    - [Plotting MOCs and Polygons](#plotting-mocs-and-polygons)
+    - [Searching FITS Files](#searching-fits-files)
+        - [Search by Point](#search-by-point)
+        - [Search by Circular Region](#search-by-circular-region)
+        - [Search by Polygonal Region](#search-by-polygonal-region)
+    - [Plotting Search Results](#plotting-search-results)
+- [API Reference](#api-reference)
+- [Contributing](#contributing)
 - [License](#license)
-- [Acknowledgments](#acknowledgments)
 
 ---
 
 ## Introduction
 
-The FITS Metadata Extractor is a Python package designed to extract and homogenize metadata from FITS files. It provides tools to:
+**FITS Metadata Extractor** is a Python package designed to streamline the processing, visualization, and searching of metadata from FITS (Flexible Image Transport System) files. It provides tools to:
 
-- Extract metadata from FITS headers.
-- Resolve astronomical object names using various services.
-- Compute sky regions (Polygon and MOC) based on WCS information.
-- Plot MOCs and Polygons.
-- Search FITS files by sky coordinates or regions.
+- Extract metadata from FITS files in parallel.
+- Save and load metadata to and from CSV files.
+- Generate and plot Multi-Order Coverage maps (MOCs) and polygons.
+- Perform spatial searches (point, circular, and polygonal) on FITS metadata.
+- Visualize search results by plotting matching FITS file coverages.
 
-This documentation provides detailed information on the modules, classes, and functions in the package.
+---
 
-## Modules
+## Features
 
-### custom_mapping.py
+- **Parallel Processing**: Efficiently process large directories of FITS files using multithreading.
+- **Metadata Extraction**: Extract key metadata fields, including WCS information, object names, and coordinate frames.
+- **Visualization**: Generate MOCs and polygons for FITS files and visualize them using Matplotlib.
+- **Spatial Search**: Search for FITS files covering specific points or regions in the sky.
+- **Integration with Astronomical Databases**: Resolve object names using Simbad, NED, and VizieR services via `astroquery`.
 
-#### Overview
+---
 
-Contains custom mappings for astronomical object names. It allows you to define custom name resolutions for objects that may not be resolved by standard services.
+## Installation
 
-#### Variables
+### Prerequisites
 
-- `CUSTOM_NAME_MAPPING`: A dictionary where keys are original object names and values are resolved names.
+- **Python 3.7 or higher**: Ensure you have a compatible Python version installed.
+- **pip**: Python package installer.
 
-#### Usage
+### Installing from Source
 
-You can add your custom mappings to the `CUSTOM_NAME_MAPPING` dictionary. For example:
+1. **Clone the Repository**
+
+   ```bash
+   git clone https://github.com/pierregab/fits_metadata_extractor.git
+   cd fits_metadata_extractor
+   ```
+
+2. **Install Dependencies**
+
+   Install the required packages listed in `requirements.txt`:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Install the Package**
+
+   Install the package locally using `setup.py`:
+
+   ```bash
+   pip install .
+   ```
+
+   *For development purposes, you can install it in editable mode:*
+
+   ```bash
+   pip install -e .
+   ```
+
+---
+
+## Usage
+
+Below is an example of how to use the `fits_metadata_extractor` package in a Python script or Jupyter Notebook.
+
+### Processing FITS Files
 
 ```python
-CUSTOM_NAME_MAPPING = {
-    'MyCustomObject': 'ResolvedNameForMyObject',
-    'OriginalName': 'ResolvedName',
-}
-```
-
----
-
-### logger.py
-
-#### Overview
-
-Sets up logging for the package. It configures logging to output to both a file and the console with appropriate formatting, including colored output for success messages.
-
-#### Functions
-
-- `setup_logging()`: Sets up logging handlers and formatters. Returns a logger instance.
-
-  **Usage:**
-
-  ```python
-  from fits_metadata_extractor.logger import setup_logging
-
-  logger = setup_logging()
-  ```
-
-- `log_success(message)`: Logs a success message in green color.
-
-  **Usage:**
-
-  ```python
-  from fits_metadata_extractor.logger import log_success
-
-  log_success("This is a success message.")
-  ```
-
----
-
-### main.py
-
-#### Overview
-
-Contains the entry point for the package when used as a script. It parses command-line arguments, processes FITS files, and saves the extracted metadata to a CSV file.
-
-#### Functions
-
-- `main()`: The main function that orchestrates the metadata extraction process.
-
-#### Usage
-
-Run the main script from the command line:
-
-```bash
-python -m fits_metadata_extractor.main -i /path/to/fits/files -o metadata_dataset.csv
-```
-
----
-
-### metadata_extractor.py
-
-#### Overview
-
-Contains the `FITSMetadataExtractor` class, which is responsible for extracting and homogenizing metadata from individual FITS files.
-
-#### Classes
-
-##### `FITSMetadataExtractor`
-
-Extracts and homogenizes metadata from FITS files.
-
-**Methods:**
-
-- `__init__(self)`: Initializes the extractor, including the object name resolver.
-
-- `infer_object_name(self, fits_file)`: Infers the object name from the FITS file name based on naming conventions.
-
-  **Parameters:**
-
-  - `fits_file (str)`: Path to the FITS file.
-
-  **Returns:**
-
-  - `str`: Inferred object name or `'Unknown'`.
-
-- `extract_fits_metadata(self, fits_file)`: Extracts relevant metadata from a FITS header and computes the Polygon and MOC.
-
-  **Parameters:**
-
-  - `fits_file (str)`: Path to the FITS file.
-
-  **Returns:**
-
-  - `dict`: Dictionary containing extracted and homogenized metadata.
-
----
-
-### plotter.py
-
-#### Overview
-
-Contains functions for plotting MOCs, Polygons, and FITS data.
-
-#### Functions
-
-- `plot_moc_and_polygon(polygon_coords, moc_str, title="MOC_Debug", fits_file=None)`
-
-  **Description:**
-
-  Plots the MOC, Polygon, and optionally FITS data on the same WCS projection, handling both Equatorial (RA/Dec) and Galactic (GLON/GLAT) coordinate systems.
-
-  **Parameters:**
-
-  - `polygon_coords (list or str)`: List of [RA, Dec] or [GLON, GLAT] pairs defining the polygon, or a JSON string representing the list of coordinates.
-  - `moc_str (str)`: Serialized MOC string.
-  - `title (str)`: Title for the plot.
-  - `fits_file (str, optional)`: Path to the FITS file to be plotted.
-
-  **Usage:**
-
-  ```python
-  from fits_metadata_extractor.plotter import plot_moc_and_polygon
-
-  polygon_coords = '[[10.0, 20.0], [15.0, 25.0], [10.0, 30.0], [5.0, 25.0]]'
-  moc_str = '1/0-4'
-  plot_moc_and_polygon(polygon_coords, moc_str, title="Example Plot", fits_file='path/to/fits_file.fits')
-  ```
-
-- `plot_moc_and_polygon_from_dataset_notebook(...)`
-
-  **Description:**
-
-  Facilitates plotting MOCs and Polygons for selected FITS files in a metadata dataset.
-
-  **Parameters:**
-
-  - `metadata_df (pandas.DataFrame)`: DataFrame containing metadata for FITS files.
-  - `input_dir (str)`: Directory path where the FITS files are located.
-  - `output_dir (str, optional)`: Directory to save the generated plots. Defaults to `'plots'`.
-  - `max_plots (int, optional)`: Maximum number of plots to generate.
-  - `fits_files (list of str, optional)`: List of FITS filenames to plot.
-  - `indices (list of int, optional)`: List of DataFrame indices to plot.
-  - `filter_func (callable, optional)`: Function that takes a DataFrame row and returns True if the row should be plotted.
-
-  **Usage:**
-
-  ```python
-  from fits_metadata_extractor.plotter import plot_moc_and_polygon_from_dataset_notebook
-  from fits_metadata_extractor.utils import load_metadata_from_csv
-
-  metadata_df = load_metadata_from_csv('metadata_dataset.csv')
-  plot_moc_and_polygon_from_dataset_notebook(metadata_df, input_dir='./fits_files', max_plots=10)
-  ```
-
----
-
-### polygon_utils.py
-
-#### Overview
-
-Provides utility functions for working with polygons.
-
-#### Functions
-
-- `polygonskyregion_to_shapely(polygon_region)`
-
-  **Description:**
-
-  Manually converts a `PolygonSkyRegion` to a Shapely `Polygon`.
-
-  **Parameters:**
-
-  - `polygon_region (PolygonSkyRegion)`: The `PolygonSkyRegion` object.
-
-  **Returns:**
-
-  - `shapely.geometry.Polygon`: The equivalent Shapely `Polygon` or `None` if conversion fails.
-
-  **Usage:**
-
-  Used internally to convert polygon regions for further processing.
-
----
-
-### processor.py
-
-#### Overview
-
-Contains the `FITSProcessor` class, which processes directories of FITS files and extracts metadata in parallel.
-
-#### Classes
-
-##### `FITSProcessor`
-
-Processes FITS files and extracts metadata.
-
-**Methods:**
-
-- `__init__(self, max_workers=10)`: Initializes the processor with a maximum number of worker threads.
-
-  **Parameters:**
-
-  - `max_workers (int)`: Maximum number of worker threads.
-
-- `process_fits_file(self, fits_file)`: Processes a single FITS file and extracts its metadata.
-
-  **Parameters:**
-
-  - `fits_file (str)`: Path to the FITS file.
-
-  **Returns:**
-
-  - `dict`: Extracted metadata.
-
-- `process_fits_directory_parallel(self, directory_path)`: Processes all FITS files in a directory using parallel processing.
-
-  **Parameters:**
-
-  - `directory_path (str)`: Path to the directory containing FITS files.
-
-  **Returns:**
-
-  - `pandas.DataFrame`: DataFrame containing metadata for all FITS files.
-
-**Usage:**
-
-```python
+import os
+import logging
 from fits_metadata_extractor.processor import FITSProcessor
+from fits_metadata_extractor.logger import setup_logging
 
-processor = FITSProcessor(max_workers=10)
-metadata_df = processor.process_fits_directory_parallel('/path/to/fits/files')
-```
+# Initialize and configure logging
+logger = setup_logging()
 
----
+# Define the directory containing FITS files
+fits_directory = "fits_collection"  # <-- Replace with your FITS files directory
 
-### resolver.py
+# Check if the directory exists
+if not os.path.isdir(fits_directory):
+    logger.error(f"The specified FITS directory does not exist: {fits_directory}")
+else:
+    logger.info(f"FITS directory found: {fits_directory}")
 
-#### Overview
-
-Contains the `ObjectNameResolver` class, which resolves astronomical object names using various services.
-
-#### Classes
-
-##### `ObjectNameResolver`
-
-Resolves astronomical object names using Simbad, NED, VizieR, and Sesame.
-
-**Methods:**
-
-- `__init__(self)`: Initializes the resolver with custom configurations for Simbad and Vizier.
-
-- `standardize_object_name(self, object_name)`: Standardizes the object name to conform to expected formats.
-
-  **Parameters:**
-
-  - `object_name (str)`: The original object name.
-
-  **Returns:**
-
-  - `list`: A list of potential standardized object names.
-
-- `resolve_with_sesame(self, object_name, retries=3)`: Resolves object name using CDS Sesame service.
-
-  **Parameters:**
-
-  - `object_name (str)`: The object name to resolve.
-  - `retries (int)`: Number of retry attempts in case of failure.
-
-  **Returns:**
-
-  - `str`: Resolved object name or `'Unknown'`.
-
-- `resolve_object_name(self, object_name)`: Resolves the object name using multiple services and custom mappings.
-
-  **Parameters:**
-
-  - `object_name (str)`: The original object name.
-
-  **Returns:**
-
-  - `tuple`: `(resolved_name (str), method_used (str))`
-
-**Usage:**
-
-Used internally by the metadata extractor to resolve object names.
-
----
-
-### search.py
-
-#### Overview
-
-Provides functions to search FITS files by sky coordinates or regions.
-
-#### Functions
-
-- `is_point_in_convex_polygon(ra, dec, polygon_coords)`
-
-  **Description:**
-
-  Determines if a point (RA, Dec) is inside a convex polygon defined by `polygon_coords`.
-
-  **Parameters:**
-
-  - `ra (float)`: Right Ascension of the point.
-  - `dec (float)`: Declination of the point.
-  - `polygon_coords (list)`: List of coordinates defining the polygon.
-
-  **Returns:**
-
-  - `bool`: `True` if the point is inside the polygon, `False` otherwise.
-
-- `search_fits_by_point(metadata_df, ra, dec)`
-
-  **Description:**
-
-  Searches for FITS files in the collection whose coverage includes the given point.
-
-  **Parameters:**
-
-  - `metadata_df (pandas.DataFrame)`: DataFrame containing metadata.
-  - `ra (float)`: Right Ascension of the point.
-  - `dec (float)`: Declination of the point.
-
-  **Returns:**
-
-  - `pandas.DataFrame`: Subset of `metadata_df` with matching FITS files.
-
-- `search_fits_by_region(metadata_df, region)`
-
-  **Description:**
-
-  Searches for FITS files in the collection whose coverage intersects the given region.
-
-  **Parameters:**
-
-  - `metadata_df (pandas.DataFrame)`: DataFrame containing metadata.
-  - `region (dict)`: Dictionary defining the region (e.g., circle or polygon).
-
-  **Returns:**
-
-  - `pandas.DataFrame`: Subset of `metadata_df` with matching FITS files.
-
-**Usage:**
-
-```python
-from fits_metadata_extractor.search import search_fits_by_point
-from fits_metadata_extractor.utils import load_metadata_from_csv
-
-metadata_df = load_metadata_from_csv('metadata_dataset.csv')
-ra = 150.0
-dec = 2.0
-matching_fits = search_fits_by_point(metadata_df, ra, dec)
-```
-
----
-
-### utils.py
-
-#### Overview
-
-Provides utility functions for data homogenization and saving/loading metadata.
-
-#### Functions
-
-- `serialize_polygon(x)`
-
-  **Description:**
-
-  Serializes the `Polygon_Coords` to a JSON string if it's not `None`. Converts NumPy arrays to lists before serialization.
-
-  **Parameters:**
-
-  - `x (list, tuple, np.ndarray, or None)`: The polygon coordinates.
-
-  **Returns:**
-
-  - `str or None`: JSON string of coordinates or `None`.
-
-- `homogenize_metadata(df)`
-
-  **Description:**
-
-  Homogenizes units and cleans the metadata DataFrame.
-
-  **Parameters:**
-
-  - `df (pandas.DataFrame)`: DataFrame with extracted metadata.
-
-  **Returns:**
-
-  - `pandas.DataFrame`: Homogenized DataFrame.
-
-- `save_metadata_to_csv(df, output_file)`
-
-  **Description:**
-
-  Saves the metadata DataFrame to a CSV file.
-
-  **Parameters:**
-
-  - `df (pandas.DataFrame)`: DataFrame containing metadata.
-  - `output_file (str)`: Path to the output CSV file.
-
-- `load_metadata_from_csv(csv_file)`
-
-  **Description:**
-
-  Loads the metadata DataFrame from a CSV file.
-
-  **Parameters:**
-
-  - `csv_file (str)`: Path to the CSV file containing the metadata.
-
-  **Returns:**
-
-  - `pandas.DataFrame`: Loaded metadata DataFrame.
-
-**Usage:**
-
-```python
-from fits_metadata_extractor.utils import save_metadata_to_csv, load_metadata_from_csv
-
-save_metadata_to_csv(metadata_df, 'metadata_dataset.csv')
-metadata_df = load_metadata_from_csv('metadata_dataset.csv')
-```
-
----
-
-## Examples
-
-### Extracting Metadata
-
-```python
-from fits_metadata_extractor.processor import FITSProcessor
-
+# Instantiate FITSProcessor with desired number of workers
 processor = FITSProcessor(max_workers=5)
-metadata_df = processor.process_fits_directory_parallel('/path/to/fits/files')
+
+# Process the FITS directory
+metadata_df = processor.process_fits_directory_parallel(fits_directory)
+
+# Display the first few rows of the metadata DataFrame
+print(metadata_df.head())
 ```
 
-### Plotting MOC and Polygon
+### Saving and Loading Metadata
+
+Save the extracted metadata to a CSV file:
 
 ```python
-from fits_metadata_extractor.plotter import plot_moc_and_polygon
+from fits_metadata_extractor.utils import save_metadata_to_csv
 
-# Assuming you have polygon coordinates and MOC string
-polygon_coords = '[[10.0, 20.0], [15.0, 25.0], [10.0, 30.0], [5.0, 25.0]]'
-moc_str = '1/0-4'
+# Define the output CSV file path
+output_csv = 'metadata.csv'
 
-plot_moc_and_polygon(polygon_coords, moc_str, title="Example Plot", fits_file='path/to/fits_file.fits')
+# Save the metadata DataFrame to CSV
+save_metadata_to_csv(metadata_df, output_csv)
 ```
 
-### Searching by Sky Coordinate
+Load the metadata from the CSV file:
+
+```python
+from fits_metadata_extractor.utils import load_metadata_from_csv
+
+# Load the metadata DataFrame from CSV
+metadata_loaded_df = load_metadata_from_csv(output_csv)
+```
+
+### Plotting MOCs and Polygons
+
+```python
+from fits_metadata_extractor.plotter import plot_moc_and_polygon_from_dataset_notebook
+
+# Define the directory to save plots
+plot_output_dir = 'plots'
+
+# Plot MOCs and polygons
+plot_moc_and_polygon_from_dataset_notebook(
+    metadata_df=metadata_loaded_df,
+    input_dir=fits_directory,
+    output_dir=plot_output_dir,
+    max_plots=10,       # Adjust as needed
+    plot_directly=True  # Set to True to display plots in a notebook
+)
+```
+
+### Searching FITS Files
+
+#### Search by Point
 
 ```python
 from fits_metadata_extractor.search import search_fits_by_point
-from fits_metadata_extractor.utils import load_metadata_from_csv
 
-metadata_df = load_metadata_from_csv('metadata_dataset.csv')
-ra = 150.0
-dec = 2.0
-matching_fits = search_fits_by_point(metadata_df, ra, dec)
-print(matching_fits)
+# Define a test point (RA, Dec in degrees)
+test_point = {'ra': 270.0, 'dec': -30.0}
+
+# Perform the search
+matching_fits_by_point = search_fits_by_point(metadata_loaded_df, test_point['ra'], test_point['dec'])
+
+# Display results
+if not matching_fits_by_point.empty:
+    print("FITS files containing the point:")
+    print(matching_fits_by_point[['FITS_File', 'Resolved_Object']])
+else:
+    print("No FITS files found containing the specified point.")
 ```
+
+#### Search by Circular Region
+
+```python
+from fits_metadata_extractor.search import search_fits_by_region
+
+# Define a circular region
+test_circle = {
+    'type': 'circle',
+    'center': (270.0, -29.0),  # RA, Dec in degrees
+    'radius': 5.0              # Radius in degrees
+}
+
+# Perform the search
+matching_fits_by_circle = search_fits_by_region(metadata_loaded_df, test_circle)
+
+# Display results
+if not matching_fits_by_circle.empty:
+    print("FITS files intersecting the circular region:")
+    print(matching_fits_by_circle[['FITS_File', 'Resolved_Object']])
+else:
+    print("No FITS files found intersecting the specified circular region.")
+```
+
+#### Search by Polygonal Region
+
+```python
+# Define a polygonal region
+test_polygon = {
+    'type': 'polygon',
+    'coordinates': [
+        (180.0, -60.0),  # Bottom-Left Corner
+        (180.0, 60.0),   # Top-Left Corner
+        (280.0, 60.0),   # Top-Right Corner
+        (280.0, -60.0)   # Bottom-Right Corner
+    ]
+}
+
+# Perform the search
+matching_fits_by_polygon = search_fits_by_region(metadata_loaded_df, test_polygon)
+
+# Display results
+if not matching_fits_by_polygon.empty:
+    print("FITS files intersecting the polygonal region:")
+    print(matching_fits_by_polygon[['FITS_File', 'Resolved_Object']])
+else:
+    print("No FITS files found intersecting the specified polygonal region.")
+```
+
+### Plotting Search Results
+
+```python
+from fits_metadata_extractor.plotter import plot_search_region_and_find_fits
+
+# Define a search region (e.g., a circle)
+search_region = {
+    'type': 'circle',
+    'center': (220.0, 0.0),
+    'radius': 60.0
+}
+
+# Plot the search region and matching FITS files
+plot_search_region_and_find_fits(
+    metadata_df=metadata_loaded_df,
+    region=search_region,
+    input_dir=fits_directory,
+    output_dir='search_plots',
+    max_plots=10,
+    plot_search_region=True
+)
+```
+
+---
+
+## API Reference
+
+### `FITSProcessor`
+
+- **Description**: Class for processing FITS files in parallel.
+
+- **Methods**:
+    - `process_fits_directory_parallel(fits_directory)`: Processes all FITS files in a directory using multithreading.
+
+### `utils`
+
+- **Functions**:
+    - `save_metadata_to_csv(metadata_df, output_csv)`: Saves the metadata DataFrame to a CSV file.
+    - `load_metadata_from_csv(input_csv)`: Loads metadata from a CSV file into a DataFrame.
+
+### `search`
+
+- **Functions**:
+    - `search_fits_by_point(metadata_df, ra, dec)`: Searches for FITS files covering a specific point.
+    - `search_fits_by_region(metadata_df, region)`: Searches for FITS files intersecting a region (circle or polygon).
+
+### `plotter`
+
+- **Functions**:
+    - `plot_moc_and_polygon_from_dataset_notebook(...)`: Plots MOCs and polygons from the metadata DataFrame.
+    - `plot_search_region_and_find_fits(...)`: Plots the search region and matching FITS file coverages.
 
 ---
 
 ## Contributing
 
-Contributions are welcome! Please open an issue or submit a pull request for any improvements or bug fixes.
+Contributions are welcome! If you have suggestions, bug reports, or patches, please open an issue or submit a pull request on the [GitHub repository](https://github.com/yourusername/fits_metadata_extractor).
+
+### Steps to Contribute
+
+1. **Fork the Repository**
+
+   Click the "Fork" button on the top right of the repository page.
+
+2. **Clone Your Fork**
+
+   ```bash
+   git clone https://github.com/pierregab/fits_metadata_extractor.git
+   cd fits_metadata_extractor
+   ```
+
+3. **Create a New Branch**
+
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+
+4. **Make Changes**
+
+   Implement your changes or additions.
+
+5. **Commit and Push**
+
+   ```bash
+   git add .
+   git commit -m "Description of your changes"
+   git push origin feature/your-feature-name
+   ```
+
+6. **Submit a Pull Request**
+
+   Go to your forked repository on GitHub and click "New pull request".
 
 ---
 
@@ -656,9 +336,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-- [Astropy](https://www.astropy.org/): A community-developed core Python package for Astronomy.
-- [Astroquery](https://astroquery.readthedocs.io/en/latest/): A package to access online Astronomical data.
-- [MOCpy](https://cds-astro.github.io/mocpy/): A Python library for manipulating MOCs.
-- [Shapely](https://shapely.readthedocs.io/en/stable/): A Python package for manipulation and analysis of planar geometric objects.
+- **Astropy**: For providing core astronomical utilities.
+- **Astroquery**: For facilitating queries to astronomical databases.
+- **MOCpy**: For handling Multi-Order Coverage maps.
+- **Matplotlib**: For plotting and visualization.
+- **Shapely**: For geometric operations.
 
 ---
+
+**Disclaimer**: This package is provided as-is without any guarantees. Use it at your own risk.
+
