@@ -7,12 +7,12 @@ with open("README.md", "r", encoding="utf-8") as fh:
 setup(
     name="fits_metadata_extractor",  # Replace with your package name
     version="0.1.0",  # Update version as needed
-    author="Your Name",
-    author_email="your_email@example.com",
+    author="Bibal Sobeaux Pierre Gabriel",
+    author_email="pierre.bibal-sobeaux@etu.unistra.fr",
     description="A package for processing, visualizing, and searching metadata from FITS files.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/fits_metadata_extractor",  # Replace with your GitHub repository URL
+    url="https://github.com/pierregab/fits_metadata_extractor",  # Replace with your GitHub repository URL
     packages=find_packages(),  # Automatically find all packages in the directory
     install_requires=[
         "astropy>=5.0",
@@ -34,7 +34,6 @@ setup(
         "Operating System :: OS Independent",
         "Intended Audience :: Science/Research",
         "Topic :: Scientific/Engineering :: Astronomy",
-        "Topic :: Scientific/Engineering :: Visualization",
     ],
     python_requires=">=3.7",  # Specify the minimum Python version
     entry_points={
@@ -43,9 +42,4 @@ setup(
         ],
     },
     include_package_data=True,  # Include additional non-code files specified in MANIFEST.in
-    project_urls={
-        "Documentation": "https://github.com/yourusername/fits_metadata_extractor/docs",  # Replace with your docs URL
-        "Source": "https://github.com/yourusername/fits_metadata_extractor",
-        "Tracker": "https://github.com/yourusername/fits_metadata_extractor/issues",
-    },
 )

@@ -1,1 +1,5 @@
-./fits_collection
+/fits_collection
+.gitignore
+/build
+/fits_metadata_extractor.egg-info
+.fits_metadata_extractor.log
