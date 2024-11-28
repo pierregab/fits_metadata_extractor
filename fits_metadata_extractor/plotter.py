@@ -15,20 +15,15 @@ from astropy.utils.exceptions import AstropyWarning
 from astropy.wcs import FITSFixedWarning
 from regions import PolygonSkyRegion
 import pandas as pd
-from matplotlib.patches import Polygon as MplPolygon
-from shapely.geometry import Polygon
-from shapely.ops import unary_union
 from reproject import reproject_interp
 from astropy.coordinates import SkyCoord
 import astropy.units as u
 from mocpy import MOC
 from .search import search_fits_by_point, search_fits_by_region
+from adjustText import adjust_text  # To adjust label positions
 
 
-
-
-
-def plot_moc_and_polygon(polygon_coords, moc_str, title="MOC_Debug", fits_file=None):
+def plot_moc_and_polygon(polygon_coords, moc_str, title="MOC_Debug", fits_file=None, plot_directly=False):
     """
     Plots the MOC, Polygon, and optionally FITS data on the same WCS projection,
     handling both Equatorial (RA/Dec) and Galactic (GLON/GLAT) coordinate systems.
@@ -265,7 +260,8 @@ def plot_moc_and_polygon(polygon_coords, moc_str, title="MOC_Debug", fits_file=N
                     logging.error(f"Error saving plot: {e}")
 
                 # Optionally display the plot
-                # plt.show()
+                if plot_directly:
+                    plt.show()
 
             except Exception as e:
                 logging.error(f"Error plotting MOC, polygon, and FITS data: {e}")
@@ -288,7 +284,8 @@ def plot_moc_and_polygon_from_dataset_notebook(
     max_plots=None,
     fits_files=None,
     indices=None,
-    filter_func=None
+    filter_func=None,
+    plot_directly=False
 ):
     """
     Facilitates the plotting of MOC and Polygon regions for selected FITS files in the metadata dataset.
@@ -386,7 +383,8 @@ def plot_moc_and_polygon_from_dataset_notebook(
                 polygon_coords=polygon_coords_str,
                 moc_str=moc_str,
                 title=title,
-                fits_file=fits_path
+                fits_file=fits_path,
+                plot_directly=plot_directly
             )
             
             # Move the generated plot to the output directory
@@ -459,20 +457,6 @@ def plot_search_region_and_find_fits(
     Returns:
         None
     """
-    import os
-    import logging
-    import matplotlib.pyplot as plt
-    from astropy.coordinates import SkyCoord
-    import astropy.units as u
-    from tqdm.notebook import tqdm
-    import numpy as np
-    import json
-    import pandas as pd
-    from astropy.io import fits
-    from astropy.wcs import WCS
-    from astropy.utils.exceptions import AstropyWarning
-    import warnings
-    from adjustText import adjust_text  # To adjust label positions
 
     # Ensure necessary functions are imported
     if 'search_fits_by_point' not in globals() and 'search_fits_by_region' not in globals():
