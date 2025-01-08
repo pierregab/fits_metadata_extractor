@@ -5,14 +5,14 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name="fits_metadata_extractor",  # Replace with your package name
-    version="0.1.0",  # Update version as needed
+    name="fits_metadata_extractor",  
+    version="0.1.0",  
     author="Bibal Sobeaux Pierre Gabriel",
     author_email="pierre.bibal-sobeaux@etu.unistra.fr",
     description="A package for processing, visualizing, and searching metadata from FITS files.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/pierregab/fits_metadata_extractor",  # Replace with your GitHub repository URL
+    url="https://github.com/pierregab/fits_metadata_extractor",  
     packages=find_packages(),  # Automatically find all packages in the directory
     install_requires=[
         "astropy>=5.0",
